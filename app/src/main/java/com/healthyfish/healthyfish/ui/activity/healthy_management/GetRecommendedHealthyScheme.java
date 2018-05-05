@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.healthyfish.healthyfish.POJO.BeanHealthPlanCommendContent;
 import com.healthyfish.healthyfish.R;
@@ -76,6 +77,7 @@ public class GetRecommendedHealthyScheme extends BaseActivity {
                 startActivity(intent);
                 break;
             case R.id.btn_chronic_disease_scheme:
+                Toast.makeText(this,"暂未开通该功能，敬请期待",Toast.LENGTH_SHORT).show();
                 break;
         }
     }

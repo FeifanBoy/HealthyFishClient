@@ -1,5 +1,6 @@
 package com.healthyfish.healthyfish.ui.activity.interrogation;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -64,6 +65,8 @@ public class ChoiceDoctor extends BaseActivity {
     private String hosp = "lzzyy";
     private String hospTxt = "柳州市中医院";
 
+    private ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +74,15 @@ public class ChoiceDoctor extends BaseActivity {
         ButterKnife.bind(this);
         mContext = this;
         initToolBar(toolbar,tvTitle,"选择医生");
+
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setMessage("加载中...");
+            progressDialog.setCanceledOnTouchOutside(true);
+        }
+        progressDialog.show();
+
         getDepartmentName();
         initData();
         initListView();
@@ -147,12 +159,12 @@ public class ChoiceDoctor extends BaseActivity {
                 .getHealthyInfoByRetrofit(OkHttpUtils.getRequestBody(beanHospDeptDoctListReq), new Subscriber<ResponseBody>() {
                     @Override
                     public void onCompleted() {
-
+                        progressDialog.hide();
                     }
 
                     @Override
                     public void onError(Throwable e) {
-
+                        progressDialog.hide();
                     }
 
                     @Override

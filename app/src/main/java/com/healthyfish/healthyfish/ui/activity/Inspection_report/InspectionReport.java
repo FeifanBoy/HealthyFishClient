@@ -135,7 +135,7 @@ public class InspectionReport extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.prescription, menu);
+        //getMenuInflater().inflate(R.menu.prescription, menu);
         return true;
     }
 
@@ -146,9 +146,9 @@ public class InspectionReport extends BaseActivity {
                 finish();
                 break;
             case R.id.prescrption:
-                Intent intent = new Intent(this, MyPrescription.class);
-                intent.putExtra("key", Constants.FOR_LIST);
-                startActivity(intent);
+//                Intent intent = new Intent(this, MyPrescription.class);
+//                intent.putExtra("key", Constants.FOR_LIST);
+//                startActivity(intent);
                 break;
         }
         return true;

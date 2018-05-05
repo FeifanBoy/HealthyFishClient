@@ -182,7 +182,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             getLoginPoint();
 
         } else {
-            MyToast.showToast(this, "您还没有登录呦");
+//            MyToast.showToast(this, "您还没有登录呦");
             startActivity(new Intent(this, Login.class));
         }
     }

@@ -1,5 +1,6 @@
 package com.healthyfish.healthyfish.ui.activity.personal_center;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -70,6 +71,9 @@ public class SetUp extends BaseActivity {
     @BindView(R.id.lly_update_version)
     AutoLinearLayout llyUpdateVersion;
 
+    private ProgressDialog progressDialog;
+    private Thread thread;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,7 +83,7 @@ public class SetUp extends BaseActivity {
 
     }
 
-    @OnClick({R.id.lly_change_password, R.id.bt_login_out})
+    @OnClick({R.id.lly_change_password, R.id.bt_login_out, R.id.lly_update_version})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.lly_change_password:
@@ -88,6 +92,11 @@ public class SetUp extends BaseActivity {
                 break;
             case R.id.bt_login_out:
                 loginOut();
+                break;
+            case R.id.lly_update_version:
+                updateVersion();
+                break;
+            default:
                 break;
         }
     }
@@ -126,8 +135,9 @@ public class SetUp extends BaseActivity {
                     DataSupport.deleteAll(BeanPrescriptiom.class);//清除处方
                     EventBus.getDefault().post(new BeanPersonalInformation(false));
                     Intent intent = new Intent(SetUp.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
+                    //startActivity(intent);
+                    removeALLActivity();
+                    //finish();
                 }
 
                 @Override
@@ -139,7 +149,7 @@ public class SetUp extends BaseActivity {
                 public void onNext(ResponseBody responseBody) {
                     try {
                         String str = responseBody.string();
-                        Toast.makeText(SetUp.this, "退出登录成功", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SetUp.this, "成功退出登录", Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -149,4 +159,43 @@ public class SetUp extends BaseActivity {
         }
     }
 
+    /**
+     * 更新版本
+     */
+    private void updateVersion() {
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setMessage("版本检查中...");
+            progressDialog.setCanceledOnTouchOutside(true);
+        }
+        progressDialog.show();
+        thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog.hide();
+                        Toast.makeText(SetUp.this, "暂无新版本", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            }
+        });
+        thread.start();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (null != thread) {
+            thread.interrupt();
+        }
+    }
 }

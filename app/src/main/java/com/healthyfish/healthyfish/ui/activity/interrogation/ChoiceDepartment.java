@@ -1,5 +1,6 @@
 package com.healthyfish.healthyfish.ui.activity.interrogation;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -63,6 +64,8 @@ public class ChoiceDepartment extends BaseActivity {
     private InterrogationRvAdapter mRvAdapter;
     private List<BeanHospDeptListRespItem> DeptList = new ArrayList<>();
 
+    private ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +73,15 @@ public class ChoiceDepartment extends BaseActivity {
         ButterKnife.bind(this);
         mContext = this;
         initToolBar(toolbar, toolbarTitle, "选择科室");
+
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setMessage("加载中...");
+            progressDialog.setCanceledOnTouchOutside(true);
+        }
+        progressDialog.show();
+
         initRecycleView();
         rvListener();
         searchListener();
@@ -140,12 +152,13 @@ public class ChoiceDepartment extends BaseActivity {
                 .getHealthyInfoByRetrofit(OkHttpUtils.getRequestBody(beanHospDeptListReq), new Subscriber<ResponseBody>() {
                     @Override
                     public void onCompleted() {
+                        progressDialog.hide();
                         mRvAdapter.notifyDataSetChanged();
                     }
 
                     @Override
                     public void onError(Throwable e) {
-
+                        progressDialog.hide();
                     }
 
                     @Override

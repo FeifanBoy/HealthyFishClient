@@ -1,5 +1,6 @@
 package com.healthyfish.healthyfish.ui.activity.personal_center;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
@@ -54,6 +55,8 @@ public class MyConcern extends BaseActivity {
 
     private String uid = MyApplication.uid;
 
+    private ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +64,14 @@ public class MyConcern extends BaseActivity {
         ButterKnife.bind(this);
         initToolBar(toolbar, toolbarTitle, "我的关注");
         getConcernList();
+
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setMessage("加载中...");
+            progressDialog.setCanceledOnTouchOutside(true);
+        }
+        progressDialog.show();
     }
 
     /**
@@ -86,13 +97,14 @@ public class MyConcern extends BaseActivity {
             @Override
             public void onCompleted() {
                 UpdateDepartmentInfoUtils.updateDepartmentInfoReq(getApplicationContext());//更新医院科室信息，下几个页面用到
+                progressDialog.hide();
                 initRecyclerView();
                 adapter.notifyDataSetChanged();
             }
 
             @Override
             public void onError(Throwable e) {
-                Log.i("LYQ", "getDoctorList--onError:" + e.toString());
+                progressDialog.hide();
             }
 
             @Override

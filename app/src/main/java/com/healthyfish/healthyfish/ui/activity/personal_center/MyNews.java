@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -35,6 +36,8 @@ public class MyNews extends BaseActivity {
     Toolbar toolbar;
     @BindView(R.id.lv_my_news)
     ListView lvMyNews;
+    @BindView(R.id.ll_empty)
+    LinearLayout llEmpty;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,18 +49,23 @@ public class MyNews extends BaseActivity {
     }
 
     /**
-     * 初始化用户评价ListView
+     * 初始化ListView
      */
     public void initListView() {
-        //评价列表适配器
-        MyNewsAdapter adapter = new MyNewsAdapter(this,getLisViewData());
-        lvMyNews.setAdapter(adapter);
-        lvMyNews.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                MyToast.showToast(MyNews.this,getLisViewData().get(position).getNewsContent());
-            }
-        });
+        List<BeanMyNewsItem> list = getLisViewData();
+        if (list.isEmpty()) {
+            llEmpty.setVisibility(View.VISIBLE);
+        } else {
+            llEmpty.setVisibility(View.GONE);
+            MyNewsAdapter adapter = new MyNewsAdapter(this,list);
+            lvMyNews.setAdapter(adapter);
+            lvMyNews.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    MyToast.showToast(MyNews.this,getLisViewData().get(position).getNewsContent());
+                }
+            });
+        }
     }
 
     /**
@@ -65,8 +73,8 @@ public class MyNews extends BaseActivity {
      */
     private List<BeanMyNewsItem> getLisViewData() {
         List<BeanMyNewsItem> list = new ArrayList<>();
-        BeanMyNewsItem myNewsItem = new BeanMyNewsItem("问诊消息","这是一条问诊消息","2017年7月8日");
-        list.add(myNewsItem);
+//        BeanMyNewsItem myNewsItem = new BeanMyNewsItem("问诊消息","这是一条问诊消息","2017年7月8日");
+//        list.add(myNewsItem);
         return list;
     }
 

@@ -131,7 +131,7 @@
 
                 <TextView
                     style="@style/funtion_menu_tv"
-                    android:text="@string/remote_monitoring" />
+                    android:text="电子处方" />
             </com.zhy.autolayout.AutoLinearLayout>
 
         </com.zhy.autolayout.AutoLinearLayout>

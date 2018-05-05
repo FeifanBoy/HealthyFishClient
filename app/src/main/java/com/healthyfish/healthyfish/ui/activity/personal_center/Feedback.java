@@ -1,11 +1,14 @@
 package com.healthyfish.healthyfish.ui.activity.personal_center;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.healthyfish.healthyfish.R;
 import com.healthyfish.healthyfish.ui.activity.BaseActivity;
@@ -42,6 +45,15 @@ public class Feedback extends BaseActivity {
 
     @OnClick(R.id.bt_commit)
     public void onViewClicked() {
-        etFeedback.getText().toString().trim();
+        if (!etFeedback.getText().toString().trim().isEmpty()) {
+            Toast.makeText(this, "提交成功", Toast.LENGTH_SHORT).show();
+
+            InputMethodManager inputMethodManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+
+            finish();
+        } else {
+            Toast.makeText(this, "请填写您的意见", Toast.LENGTH_SHORT).show();
+        }
     }
 }

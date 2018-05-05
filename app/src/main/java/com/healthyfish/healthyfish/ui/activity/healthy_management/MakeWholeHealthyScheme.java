@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.healthyfish.healthyfish.R;
 import com.healthyfish.healthyfish.ui.activity.BaseActivity;
@@ -77,8 +78,9 @@ public class MakeWholeHealthyScheme extends BaseActivity {
                 startActivity(intentRecommend);
                 break;
             case R.id.btn_get_user_custom_scheme:
-                Intent intentCustom = new Intent(MakeWholeHealthyScheme.this, GetUserCustomScheme.class);
-                startActivity(intentCustom);
+//                Intent intentCustom = new Intent(MakeWholeHealthyScheme.this, GetUserCustomScheme.class);
+//                startActivity(intentCustom);
+                Toast.makeText(this,"暂未开通该功能，敬请期待",Toast.LENGTH_SHORT).show();
                 break;
         }
     }

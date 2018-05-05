@@ -49,6 +49,7 @@ import com.healthyfish.healthyfish.eventbus.WeChatReceiveSysMdrMsg;
 import com.healthyfish.healthyfish.ui.activity.HealthNews;
 import com.healthyfish.healthyfish.ui.activity.HomeSearchResult;
 import com.healthyfish.healthyfish.ui.activity.Inspection_report.InspectionReport;
+import com.healthyfish.healthyfish.ui.activity.Inspection_report.MyPrescription;
 import com.healthyfish.healthyfish.ui.activity.MoreHealthNews;
 import com.healthyfish.healthyfish.ui.activity.SearchResult;
 import com.healthyfish.healthyfish.ui.activity.appointment.AppointmentHome;
@@ -541,20 +542,22 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.fm_remote_monitoring:
-                List<String> topicList = new ArrayList<>(); // 获取购买过问诊服务的医生列表
-                //Cursor cursor = DataSupport.findBySQL("select topic from immsgbean where id in (select min(id) from immsgbean group by topic) ");
-                Cursor cursor = DataSupport.findBySQL("select distinct topic from immsgbean");
-                if (cursor.moveToFirst()) {
-                    do {
-                        String peerNumber = cursor.getString(cursor.getColumnIndex("topic")).substring(1);
-                        topicList.add(peerNumber);
-                    } while (cursor.moveToNext());
-                }
-                cursor.close();
+                Intent intentMP = new Intent(getActivity(), MyPrescription.class);
+                intentMP.putExtra("key", Constants.FOR_LIST);
+                startActivity(intentMP);
 
-                /*for (String b : topicList) {
-                    Log.e("topic", b);
-                }*/
+//                List<String> topicList = new ArrayList<>(); // 获取购买过问诊服务的医生列表
+//                Cursor cursor = DataSupport.findBySQL("select distinct topic from immsgbean");
+//                if (cursor.moveToFirst()) {
+//                    do {
+//                        String peerNumber = cursor.getString(cursor.getColumnIndex("topic")).substring(1);
+//                        topicList.add(peerNumber);
+//                    } while (cursor.moveToNext());
+//                }
+//                cursor.close();
+
+                break;
+            default:
                 break;
         }
     }
