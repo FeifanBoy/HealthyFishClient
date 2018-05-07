@@ -308,7 +308,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      *
      * @param i
      */
-    private void setTab(int i) {
+    public void setTab(int i) {
         switch (i) {
             case 0:
                 reSet();

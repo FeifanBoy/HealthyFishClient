@@ -4,15 +4,21 @@
     android:layout_height="match_parent"
     tools:context="com.healthyfish.healthyfish.ui.fragment.HealthWorkshopFragment">
 
-    <RelativeLayout
+    <com.youzan.sdk.web.plugin.YouzanBrowser
+        android:id="@+id/health_worker_webview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent" />
 
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="健康工坊正在努力搭建中..." />
-    </RelativeLayout>
+    <!-- <RelativeLayout
+         android:layout_width="match_parent"
+         android:layout_height="match_parent">
+
+
+         <TextView
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:gravity="center"
+             android:text="健康工坊正在努力搭建中..." />
+     </RelativeLayout>-->
 </FrameLayout>

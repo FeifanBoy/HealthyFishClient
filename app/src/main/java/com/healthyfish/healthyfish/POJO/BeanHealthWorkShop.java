@@ -10,6 +10,8 @@ package com.healthyfish.healthyfish.POJO;
 public class BeanHealthWorkShop {
 
     // 商品缩略图
+    private String thumbNailCommodityUrl;
+    // 商品缩略图
     private int thumbNailCommodity;
     // 商品名称
     private String nameCommodity;
@@ -17,6 +19,18 @@ public class BeanHealthWorkShop {
     private String imgHotSale;
     // 是否热销
     private boolean isHotSale = false;
+
+    public String getThumbNailCommodityUrl() {
+        return thumbNailCommodityUrl;
+    }
+
+    public void setThumbNailCommodityUrl(String thumbNailCommodityUrl) {
+        this.thumbNailCommodityUrl = thumbNailCommodityUrl;
+    }
+
+    public void setThumbNailCommodity(int thumbNailCommodity) {
+        this.thumbNailCommodity = thumbNailCommodity;
+    }
 
     public int getThumbNailCommodity() {
         return thumbNailCommodity;

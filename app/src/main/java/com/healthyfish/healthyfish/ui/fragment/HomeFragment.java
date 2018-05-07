@@ -3,14 +3,12 @@ package com.healthyfish.healthyfish.ui.fragment;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -25,6 +23,7 @@ import android.widget.Toast;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.bumptech.glide.Glide;
+import com.healthyfish.healthyfish.MainActivity;
 import com.healthyfish.healthyfish.POJO.BeanHealthPlanCommendContent;
 import com.healthyfish.healthyfish.POJO.BeanHealthWorkShop;
 import com.healthyfish.healthyfish.POJO.BeanHomeImgSlideReq;
@@ -32,12 +31,7 @@ import com.healthyfish.healthyfish.POJO.BeanHomeImgSlideResp;
 import com.healthyfish.healthyfish.POJO.BeanHomeImgSlideRespItem;
 import com.healthyfish.healthyfish.POJO.BeanItemNewsAbstract;
 import com.healthyfish.healthyfish.POJO.BeanListReq;
-import com.healthyfish.healthyfish.POJO.BeanSearchReq;
-import com.healthyfish.healthyfish.POJO.BeanSearchResp;
-import com.healthyfish.healthyfish.POJO.BeanSearchRespItem;
 import com.healthyfish.healthyfish.POJO.BeanSessionIdReq;
-import com.healthyfish.healthyfish.POJO.BeanSessionIdResp;
-import com.healthyfish.healthyfish.POJO.ImMsgBean;
 import com.healthyfish.healthyfish.R;
 import com.healthyfish.healthyfish.adapter.HomePageHealthInfoAadpter;
 import com.healthyfish.healthyfish.adapter.HomePageHealthWorkShopAdapter;
@@ -51,7 +45,6 @@ import com.healthyfish.healthyfish.ui.activity.HomeSearchResult;
 import com.healthyfish.healthyfish.ui.activity.Inspection_report.InspectionReport;
 import com.healthyfish.healthyfish.ui.activity.Inspection_report.MyPrescription;
 import com.healthyfish.healthyfish.ui.activity.MoreHealthNews;
-import com.healthyfish.healthyfish.ui.activity.SearchResult;
 import com.healthyfish.healthyfish.ui.activity.appointment.AppointmentHome;
 import com.healthyfish.healthyfish.ui.activity.healthy_management.MainIndexHealthyManagement;
 import com.healthyfish.healthyfish.ui.activity.interrogation.ChoiceDepartment;
@@ -66,6 +59,11 @@ import com.healthyfish.healthyfish.utils.NetworkConnectUtils;
 import com.healthyfish.healthyfish.utils.OkHttpUtils;
 import com.healthyfish.healthyfish.utils.RetrofitManagerUtils;
 import com.healthyfish.healthyfish.utils.Utils1;
+import com.youzan.sdk.http.engine.OnQuery;
+import com.youzan.sdk.http.engine.QueryError;
+import com.youzan.sdk.http.query.GoodsOnSaleQuery;
+import com.youzan.sdk.model.goods.GoodsDetailModel;
+import com.youzan.sdk.model.goods.GoodsListModel;
 import com.zhy.autolayout.AutoLinearLayout;
 import com.zhy.autolayout.AutoRelativeLayout;
 
@@ -111,8 +109,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     TextView date;
     @BindView(R.id.plan_list)
     AutoCardView planList;
-    private Context mContext;
-    private View rootView;
     @BindView(R.id.topbar_scan)
     ImageView topbarScan;
     @BindView(R.id.topbar_search_iv)
@@ -136,6 +132,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     ImageView fmHealthManagement;
     @BindView(R.id.fm_remote_monitoring)
     ImageView fmRemoteMonitoring;
+    @BindView(R.id.ll_healthy_work)
+    AutoLinearLayout llHealthyWork;
+    @BindView(R.id.layout_healthy_work)
+    AutoCardView layoutHealthyWork;
+
+    private Context mContext;
+    private View rootView;
+
     private String url2 = "http://219.159.248.209/demo/TestServlet";
     final BeanSessionIdReq beanSessionIdReq = new BeanSessionIdReq();
     private HomePageHealthInfoAadpter healthInfoAdapter;
@@ -147,7 +151,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         mContext = getActivity();
         rootView = inflater.inflate(R.layout.fragment_home, container, false);
         unbinder = ButterKnife.bind(this, rootView);
+
         EventBus.getDefault().register(this);
+
         String user = MySharedPrefUtil.getValue("user");
         String sid = MySharedPrefUtil.getValue("sid");
         if (!TextUtils.isEmpty(user) && !TextUtils.isEmpty(sid)) {
@@ -155,6 +161,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             AutoLogin.autoLogin();
             initAll();
         }
+
         topbarSearchEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -168,6 +175,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 return true;
             }
         });
+
         return rootView;
 
     }
@@ -479,24 +487,64 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     // 初始化健康工坊
     private void initHealthWorkShop() {
-        List<BeanHealthWorkShop> listHealthWorkShop = new ArrayList<>();
-        BeanHealthWorkShop commodity1 = new BeanHealthWorkShop();
-        commodity1.setSmallImgCommodity(R.mipmap.image_home_page_work_shop);
-        commodity1.setNameCommodity("中医面膜");
-        commodity1.setHotSale(true);
+        final List<BeanHealthWorkShop> listHealthWorkShop = new ArrayList<>();
 
-        BeanHealthWorkShop commodity2 = new BeanHealthWorkShop();
-        commodity2.setSmallImgCommodity(R.mipmap.image_home_page_work_shop);
-        commodity2.setNameCommodity("西医面膜");
-        commodity2.setHotSale(false);
+//        BeanHealthWorkShop commodity1 = new BeanHealthWorkShop();
+////        commodity1.setSmallImgCommodity(R.mipmap.image_home_page_work_shop);
+////        commodity1.setNameCommodity("中医面膜");
+////        commodity1.setHotSale(true);
+////
+////        BeanHealthWorkShop commodity2 = new BeanHealthWorkShop();
+////        commodity2.setSmallImgCommodity(R.mipmap.image_home_page_work_shop);
+////        commodity2.setNameCommodity("西医面膜");
+////        commodity2.setHotSale(false);
+////
+////        listHealthWorkShop.add(commodity1);
+////        listHealthWorkShop.add(commodity2);
 
-        listHealthWorkShop.add(commodity1);
-        listHealthWorkShop.add(commodity2);
+//        GridLayoutManager layoutManager = new GridLayoutManager(mContext, 2);
+//        workShopRecyclerview.setLayoutManager(layoutManager);
+//        HomePageHealthWorkShopAdapter adapter = new HomePageHealthWorkShopAdapter(mContext, listHealthWorkShop);
+//        workShopRecyclerview.setAdapter(adapter);
 
-        GridLayoutManager layoutManager = new GridLayoutManager(mContext, 2);
-        workShopRecyclerview.setLayoutManager(layoutManager);
-        HomePageHealthWorkShopAdapter adapter = new HomePageHealthWorkShopAdapter(mContext, listHealthWorkShop);
-        workShopRecyclerview.setAdapter(adapter);
+        new GoodsOnSaleQuery()
+                .put("page_no", 1)//起始页码
+                .put("page_size", 100)//单页数量
+                .post(new OnQuery<GoodsListModel>() {
+                    @Override
+                    public void onFailed(QueryError error) {
+                    }
+
+                    @Override
+                    public void onSuccess(GoodsListModel data) {
+                        if (data.getTotalResults() != 0) {
+                            List<GoodsDetailModel> items = data.getItems();
+                            for (int i = 0; i < data.getTotalResults(); i++) {
+                                String title = items.get(i).getTitle();     //商品名
+                                String url = items.get(i).getDetailUrl();    //商品页面链接
+                                String imgUrl = items.get(i).getPicUrl();    //商品主图片地址
+                                String imgThumbUrl = items.get(i).getPicThumbUrl();//商品主图片缩略图地址
+
+                                BeanHealthWorkShop commodity = new BeanHealthWorkShop();
+                                commodity.setNameCommodity(title);
+                                commodity.setThumbNailCommodityUrl(imgThumbUrl);
+                                if (i == 0) {
+                                    commodity.setHotSale(true);
+                                } else {
+                                    commodity.setHotSale(false);
+                                }
+                                listHealthWorkShop.add(commodity);
+                            }
+
+                            GridLayoutManager layoutManager = new GridLayoutManager(mContext, 2);
+                            workShopRecyclerview.setLayoutManager(layoutManager);
+                            HomePageHealthWorkShopAdapter adapter = new HomePageHealthWorkShopAdapter(mContext, listHealthWorkShop);
+                            workShopRecyclerview.setAdapter(adapter);
+                        } else {
+                            layoutHealthyWork.setVisibility(View.GONE);
+                        }
+                    }
+                });
     }
 
 
@@ -505,6 +553,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         super.onDestroyView();
         //unbinder.unbind();
         EventBus.getDefault().unregister(this);
+        unbinder.unbind();
     }
 
     @Override
@@ -537,7 +586,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.fm_fm_inspection_report:
                 Intent toInspectionReport = new Intent(getActivity(), InspectionReport.class);
-                toInspectionReport.putExtra("key",Constants.FOR_LIST);
+                toInspectionReport.putExtra("key", Constants.FOR_LIST);
                 startActivity(toInspectionReport);
                 break;
 
@@ -557,14 +606,18 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 //                cursor.close();
 
                 break;
+            case R.id.ll_healthy_work:
+                MainActivity mainActivity = new MainActivity();
+                mainActivity.setTab(3);
+                break;
             default:
                 break;
         }
     }
 
     /*
-    * 更新健康计划UI
-    * */
+     * 更新健康计划UI
+     * */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void refreshUI(NoticeMessage noticeMessage) {
         if (noticeMessage.getMsg() == 1) {
@@ -573,8 +626,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     }
 
     /*
-    * 更新病历夹系统消息
-    * */
+     * 更新病历夹系统消息
+     * */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void upDateMdrSystemInfo(final WeChatReceiveSysMdrMsg msg) {
         Constants.NUMBER_SYS_INFO++;

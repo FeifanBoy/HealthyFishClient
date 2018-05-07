@@ -62,7 +62,7 @@ public class HomePageHealthWorkShopAdapter extends RecyclerView.Adapter<HomePage
         BeanHealthWorkShop bean = listHealthWorkShop.get(position);
         holder.nameWorkShopCommodity.setText(bean.getNameCommodity());
         Glide.with(mContext)
-                .load(R.mipmap.image_home_page_work_shop)
+                .load(listHealthWorkShop.get(position).getThumbNailCommodityUrl())
                 .placeholder(R.mipmap.placeholder)
                 .error(R.mipmap.error)
                 .centerCrop()

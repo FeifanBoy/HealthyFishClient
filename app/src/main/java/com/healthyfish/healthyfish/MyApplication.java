@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.widget.Toast;
 
+import com.youzan.sdk.YouzanSDK;
 import com.zhy.autolayout.config.AutoLayoutConifg;
 
 import org.litepal.LitePal;
@@ -41,6 +42,8 @@ public class MyApplication extends Application{
         AutoLayoutConifg.getInstance().useDeviceSize();
         applicationContext = getApplicationContext();
         LitePal.initialize(getApplicationContext());//初始化数据库
+
+        YouzanSDK.init(this, "f734d9de4a7959d2941476408480462");// 初始化有赞
 
         oList = new ArrayList<Activity>();
 

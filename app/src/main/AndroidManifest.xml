@@ -12,6 +12,12 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
+    <!-- 有赞 如果店铺开启到店自提选项, 为了更好的体验需要获取地理信息的权限. (非必须项) -->
+    <uses-permission android:name="android.permission.ACCESS_GPS"/>
+    <uses-permission android:name="android.permission.ACCESS_ASSISTED_GPS"/>
+    <uses-permission android:name="android.permission.ACCESS_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -20,6 +26,16 @@
         android:roundIcon="@mipmap/logo_healthyfish"
         android:supportsRtl="true"
         android:theme="@style/AppTheme2">
+
+        <!-- 有赞页面所需信息 -->
+        <!-- AppID, 使用有赞原生接入时必须填写 -->
+        <meta-data
+            android:name="YZ_APP_ID"
+            android:value="f4b321e84f43486e5e"/>
+        <!-- AppSecret, 使用有赞原生接入时必须填写 -->
+        <meta-data
+            android:name="YZ_APP_SECRET"
+            android:value="b1d3ddeb4942da40209a7a0f5165c9f0"/>
 
         <!-- 屏幕自适应框架设计稿长宽 -->
         <meta-data
