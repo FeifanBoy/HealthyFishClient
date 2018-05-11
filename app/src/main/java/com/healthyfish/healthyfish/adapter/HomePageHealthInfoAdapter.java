@@ -22,7 +22,7 @@ import static com.healthyfish.healthyfish.constant.Constants.HttpHealthyFishyUrl
  * 作者： TMXK on 2017/6/30.
  */
 
-public class HomePageHealthInfoAadpter extends RecyclerView.Adapter<HomePageHealthInfoAadpter.ViewHolder> {
+public class HomePageHealthInfoAdapter extends RecyclerView.Adapter<HomePageHealthInfoAdapter.ViewHolder> {
 
     private View headView;
     private View footView;
@@ -34,7 +34,7 @@ public class HomePageHealthInfoAadpter extends RecyclerView.Adapter<HomePageHeal
     //private int mPosition;
     private List<BeanItemNewsAbstract> listNews;
 
-    public HomePageHealthInfoAadpter(Context mContext, List<BeanItemNewsAbstract> listNews) {
+    public HomePageHealthInfoAdapter(Context mContext, List<BeanItemNewsAbstract> listNews) {
         this.mContext = mContext;
         this.listNews = listNews;
     }

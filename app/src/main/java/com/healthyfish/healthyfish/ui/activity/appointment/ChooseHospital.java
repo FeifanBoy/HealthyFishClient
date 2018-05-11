@@ -48,12 +48,15 @@ public class ChooseHospital extends BaseActivity {
     private ChooseHospitalAdapter adapter;
     private List<BeanHospitalListRespItem> list = new ArrayList<>();
 
+    private int mType;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_hospital);
         ButterKnife.bind(this);
         initToolBar(toolbar, toolbarTitle, "选择医院");
+        mType = getIntent().getIntExtra("TYPE",0);
         initData(); //获取医院列表
         Listener(); //医院列表的点击监听
     }
@@ -68,6 +71,7 @@ public class ChooseHospital extends BaseActivity {
                 if (position < 2) {
                     Intent intent = new Intent(ChooseHospital.this, SelectDepartments.class);
                     intent.putExtra("BeanHospitalListRespItem", list.get(position)); //传递医院信息到下一个页面（选择科室页面）
+                    intent.putExtra("TYPE",mType);
                     startActivity(intent);
                 } else {
                     Toast.makeText(ChooseHospital.this, "非常抱歉！该医院暂时没有科室开通网上挂号", Toast.LENGTH_SHORT).show();
@@ -97,7 +101,7 @@ public class ChooseHospital extends BaseActivity {
 
             @Override
             public void onError(Throwable e) {
-                Log.e("LYQ", e.toString());
+                //Log.e("LYQ", e.toString());
             }
 
             @Override
@@ -108,7 +112,7 @@ public class ChooseHospital extends BaseActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                Log.i("LYQ", "医院列表响应：" + str);
+                //Log.i("LYQ", "医院列表响应：" + str);
                 BeanHospitalListResp beanHospitalListResp = JSON.parseObject(str, BeanHospitalListResp.class);
                 for (BeanHospitalListRespItem beanHospitalListRespItem : beanHospitalListResp.getHospitalList()) {
                     list.add(beanHospitalListRespItem); //将医院信息添加到医院列表里用于展示

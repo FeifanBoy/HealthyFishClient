@@ -23,6 +23,7 @@ import com.healthyfish.healthyfish.R;
 import com.healthyfish.healthyfish.adapter.ChoiceDoctorLvAdapter;
 import com.healthyfish.healthyfish.adapter.DepartmentDoctorLvAdapter;
 import com.healthyfish.healthyfish.ui.activity.BaseActivity;
+import com.healthyfish.healthyfish.ui.activity.interrogation.ChoiceService;
 import com.healthyfish.healthyfish.utils.DoctorPostComparator;
 import com.healthyfish.healthyfish.utils.OkHttpUtils;
 import com.healthyfish.healthyfish.utils.RetrofitManagerUtils;
@@ -70,6 +71,7 @@ public class DepartmentDoctorList extends BaseActivity {
 
     private String hosp = "lzzyy";//默认
     private String hospTxt = "柳州市中医院";//默认
+    private int mType;
 
 
     @Override
@@ -113,9 +115,16 @@ public class DepartmentDoctorList extends BaseActivity {
                 beanDoctorInfo.setPrice(String.valueOf(DeptDoctList.get(position).getPRICE()));
                 beanDoctorInfo.setSchdList(DeptDoctList.get(position).getSchdList());
 
-                Intent intent = new Intent(DepartmentDoctorList.this,DoctorDetail.class);
-                intent.putExtra("BeanDoctorInfo", beanDoctorInfo); //将医生信息传递到下一页面
-                startActivity(intent);
+                if (mType == 1) {
+                    Intent intent = new Intent(mContext, ChoiceService.class);
+                    intent.putExtra("BeanDoctorInfo", beanDoctorInfo);
+                    startActivity(intent);
+                } else if (mType == 2) {
+                    Intent intent = new Intent(DepartmentDoctorList.this,DoctorDetail.class);
+                    intent.putExtra("BeanDoctorInfo", beanDoctorInfo); //将医生信息传递到下一页面
+                    startActivity(intent);
+                }
+
             }
         });
     }
@@ -124,6 +133,7 @@ public class DepartmentDoctorList extends BaseActivity {
      * 获取上一页面传过来的科室名
      */
     private void getDepartmentName() {
+        mType = getIntent().getIntExtra("TYPE", 0);
         beanHospRegisterReq = (BeanHospRegisterReq) getIntent().getSerializableExtra("BeanHospRegisterReq");
         if (beanHospRegisterReq!= null){
             departmentName = beanHospRegisterReq.getDeptTxt();
@@ -162,7 +172,7 @@ public class DepartmentDoctorList extends BaseActivity {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        Log.e("LYQ", jsonStr);
+                        //Log.e("LYQ", jsonStr);
                         List<JSONObject> doctorList = JSONArray.parseObject(jsonStr,List.class);
                         for (JSONObject  object :doctorList) {
                             String jsonString = object.toJSONString();

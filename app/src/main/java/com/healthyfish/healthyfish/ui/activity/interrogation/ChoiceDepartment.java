@@ -7,12 +7,7 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
@@ -24,7 +19,6 @@ import com.healthyfish.healthyfish.POJO.BeanHospDeptListRespItem;
 import com.healthyfish.healthyfish.R;
 import com.healthyfish.healthyfish.adapter.InterrogationRvAdapter;
 import com.healthyfish.healthyfish.ui.activity.BaseActivity;
-import com.healthyfish.healthyfish.ui.activity.SearchResult;
 import com.healthyfish.healthyfish.utils.DividerGridItemDecoration;
 import com.healthyfish.healthyfish.utils.MyRecyclerViewOnItemListener;
 import com.healthyfish.healthyfish.utils.OkHttpUtils;
@@ -40,23 +34,12 @@ import butterknife.ButterKnife;
 import okhttp3.ResponseBody;
 import rx.Subscriber;
 
-/**
- * 描述：
- * 作者：LYQ on 2017/7/31.
- * 邮箱：feifanman@qq.com
- * 编辑：LYQ
- */
-
 public class ChoiceDepartment extends BaseActivity {
 
     @BindView(R.id.toolbar_title)
     TextView toolbarTitle;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.iv_search)
-    ImageView ivSearch;
-    @BindView(R.id.et_search)
-    EditText etSearch;
     @BindView(R.id.rv_choice_department)
     RecyclerView rvChoiceDepartment;
 
@@ -71,8 +54,8 @@ public class ChoiceDepartment extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choice_department);
         ButterKnife.bind(this);
-        mContext = this;
         initToolBar(toolbar, toolbarTitle, "选择科室");
+        mContext = this;
 
         if (progressDialog == null) {
             progressDialog = new ProgressDialog(this);
@@ -84,26 +67,7 @@ public class ChoiceDepartment extends BaseActivity {
 
         initRecycleView();
         rvListener();
-        searchListener();
-    }
 
-    /**
-     * 搜索功能
-     */
-    private void searchListener() {
-        etSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    Intent intent = new Intent(ChoiceDepartment.this, SearchResult.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putString("SEARCH_KEY", etSearch.getText().toString());
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                }
-                return true;
-            }
-        });
     }
 
     /**
@@ -166,7 +130,6 @@ public class ChoiceDepartment extends BaseActivity {
                         String jsonStr = null;
                         try {
                             jsonStr = responseBody.string();
-                            Log.e("LYQ", "所有科室信息：" + jsonStr);
                             List<JSONObject> beanHospDeptListResp = JSONArray.parseObject(jsonStr, List.class);
                             for (JSONObject object : beanHospDeptListResp) {
                                 String jsonString = object.toJSONString();
@@ -185,6 +148,6 @@ public class ChoiceDepartment extends BaseActivity {
                         }
                     }
                 });
-
     }
+
 }

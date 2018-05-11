@@ -270,7 +270,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         fragments = new ArrayList<>();
         homeFragment = new HomeFragment();
         interrogationFragment = new InterrogationFragment();
-        healthyCircleFragment = new HealthyCircleFragment(getSupportFragmentManager());
+        healthyCircleFragment = new HealthyCircleFragment();
         healthWorkshopFragment = new HealthWorkshopFragment();
         personalCenterFragment = new PersonalCenterFragment();
         fragments.add(homeFragment);

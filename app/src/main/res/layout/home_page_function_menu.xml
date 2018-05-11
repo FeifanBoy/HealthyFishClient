@@ -34,7 +34,7 @@
 
                 <TextView
                     style="@style/funtion_menu_tv"
-                    android:text="@string/interrogation" />
+                    android:text="在线咨询" />
             </com.zhy.autolayout.AutoLinearLayout>
 
             <com.zhy.autolayout.AutoLinearLayout

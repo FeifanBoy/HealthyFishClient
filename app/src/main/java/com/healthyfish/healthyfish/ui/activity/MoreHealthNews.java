@@ -15,7 +15,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.healthyfish.healthyfish.POJO.BeanItemNewsAbstract;
 import com.healthyfish.healthyfish.POJO.BeanListReq;
 import com.healthyfish.healthyfish.R;
-import com.healthyfish.healthyfish.adapter.HomePageHealthInfoAadpter;
+import com.healthyfish.healthyfish.adapter.HomePageHealthInfoAdapter;
 import com.healthyfish.healthyfish.utils.MyRecyclerViewOnItemListener;
 import com.healthyfish.healthyfish.utils.MyToast;
 import com.healthyfish.healthyfish.utils.OkHttpUtils;
@@ -47,7 +47,7 @@ public class MoreHealthNews extends BaseActivity {
     RecyclerView ryvMoreHealthNews;
 
     private Context mContext;
-    private HomePageHealthInfoAadpter healthInfoAdapter;
+    private HomePageHealthInfoAdapter healthInfoAdapter;
     final List<BeanItemNewsAbstract> newsList = new ArrayList<>();
     private TextView footTextView;
     private int to = 15;//起始加载的资讯条数
@@ -68,7 +68,7 @@ public class MoreHealthNews extends BaseActivity {
         ryvMoreHealthNews.setLayoutManager(lm);
         final View footView = LayoutInflater.from(this).inflate(R.layout.layout_load_more, ryvMoreHealthNews, false);
         footTextView = (TextView) footView.findViewById(R.id.tv_load_more);
-        healthInfoAdapter = new HomePageHealthInfoAadpter(mContext, newsList);
+        healthInfoAdapter = new HomePageHealthInfoAdapter(mContext, newsList);
         ryvMoreHealthNews.setAdapter(healthInfoAdapter);
         healthInfoAdapter.addFootView(footView);
         createRequest(0, to, false);

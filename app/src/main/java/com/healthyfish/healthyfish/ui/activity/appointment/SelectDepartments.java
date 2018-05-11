@@ -61,6 +61,8 @@ public class SelectDepartments extends BaseActivity {
     private String hospName = "柳州市中医院";//默认
     private final int[] icons = new int[]{R.mipmap.ic_chinese_medicine};//填充科室图标
 
+    private int mType;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +78,7 @@ public class SelectDepartments extends BaseActivity {
      * 从上一页面获取医院信息
      */
     private void getHospInfo() {
+        mType = getIntent().getIntExtra("TYPE", 0);
         //从选择医院页面跳转过来的时候获取
         if (getIntent().getSerializableExtra("BeanHospitalListRespItem") != null) {
             beanHospitalListRespItem = (BeanHospitalListRespItem) getIntent().getSerializableExtra("BeanHospitalListRespItem");
@@ -111,6 +114,7 @@ public class SelectDepartments extends BaseActivity {
 
                 Intent intent = new Intent(SelectDepartments.this, DepartmentDoctorList.class);
                 intent.putExtra("BeanHospRegisterReq", beanHospRegisterReq); //传递科室编号和科室名到下一个页面用
+                intent.putExtra("TYPE", mType);
                 startActivity(intent);
             }
         });

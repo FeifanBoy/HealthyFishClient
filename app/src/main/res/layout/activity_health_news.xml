@@ -6,9 +6,15 @@
 
     <include layout="@layout/toolbar" />
 
+    <ProgressBar
+        android:id="@+id/pb_ad_web"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="3dp" />
+
     <WebView
         android:id="@+id/wv_health_news"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
 </com.zhy.autolayout.AutoLinearLayout>

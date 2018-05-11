@@ -33,7 +33,7 @@ import com.healthyfish.healthyfish.POJO.BeanItemNewsAbstract;
 import com.healthyfish.healthyfish.POJO.BeanListReq;
 import com.healthyfish.healthyfish.POJO.BeanSessionIdReq;
 import com.healthyfish.healthyfish.R;
-import com.healthyfish.healthyfish.adapter.HomePageHealthInfoAadpter;
+import com.healthyfish.healthyfish.adapter.HomePageHealthInfoAdapter;
 import com.healthyfish.healthyfish.adapter.HomePageHealthWorkShopAdapter;
 import com.healthyfish.healthyfish.adapter.WholeSchemeAdapter;
 import com.healthyfish.healthyfish.constant.Constants;
@@ -47,7 +47,7 @@ import com.healthyfish.healthyfish.ui.activity.Inspection_report.MyPrescription;
 import com.healthyfish.healthyfish.ui.activity.MoreHealthNews;
 import com.healthyfish.healthyfish.ui.activity.appointment.AppointmentHome;
 import com.healthyfish.healthyfish.ui.activity.healthy_management.MainIndexHealthyManagement;
-import com.healthyfish.healthyfish.ui.activity.interrogation.ChoiceDepartment;
+import com.healthyfish.healthyfish.ui.activity.interrogation.InterrogationHome;
 import com.healthyfish.healthyfish.ui.activity.medicalrecord.AllMedRec;
 import com.healthyfish.healthyfish.ui.activity.personal_center.MyNews;
 import com.healthyfish.healthyfish.ui.widget.AutoCardView;
@@ -142,7 +142,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     private String url2 = "http://219.159.248.209/demo/TestServlet";
     final BeanSessionIdReq beanSessionIdReq = new BeanSessionIdReq();
-    private HomePageHealthInfoAadpter healthInfoAdapter;
+    private HomePageHealthInfoAdapter healthInfoAdapter;
     private boolean isRefresh = false;//是否已经加载过首页
 
     @Override
@@ -434,7 +434,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                                     }
                                     LinearLayoutManager lmg = new LinearLayoutManager(mContext);
                                     healthNewsRecyclerview.setLayoutManager(lmg);
-                                    healthInfoAdapter = new HomePageHealthInfoAadpter(getActivity(), list);
+                                    healthInfoAdapter = new HomePageHealthInfoAdapter(getActivity(), list);
                                     healthNewsRecyclerview.setAdapter(healthInfoAdapter);
                                 }
                             }
@@ -565,7 +565,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 startActivity(new Intent(mContext, MyNews.class));
                 break;
             case R.id.fm_interrogation2:
-                startActivity(new Intent(mContext, ChoiceDepartment.class));
+                startActivity(new Intent(mContext, InterrogationHome.class));
                 break;
 
             case R.id.fm_med_rec:

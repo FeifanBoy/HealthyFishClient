@@ -143,6 +143,7 @@ public class AppointmentHome extends BaseActivity {
         switch (view.getId()) {
             case R.id.choose_hospital://点击选择医院按钮
                 Intent toChooseHospital = new Intent(this, ChooseHospital.class);
+                toChooseHospital.putExtra("TYPE", 2);
                 startActivity(toChooseHospital);
                 break;
             case R.id.choose_department://点击选择科室按钮
