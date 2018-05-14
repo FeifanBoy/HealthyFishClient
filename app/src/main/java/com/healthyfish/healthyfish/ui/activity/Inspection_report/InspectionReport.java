@@ -1,6 +1,5 @@
 package com.healthyfish.healthyfish.ui.activity.Inspection_report;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,7 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
@@ -30,6 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import okhttp3.ResponseBody;
@@ -45,6 +45,8 @@ public class InspectionReport extends BaseActivity {
     List<BeanInspectionReport> mList = new ArrayList<>();
     boolean hasNewData = false;
     InspectionReportAdapter adapter;
+    @BindView(R.id.ll_empty)
+    LinearLayout llEmpty;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,15 +66,17 @@ public class InspectionReport extends BaseActivity {
         String key = getIntent().getStringExtra("key");
         if (!key.equals(Constants.FOR_LIST)) {//从聊天界面跳转过来的key是真正的key
             if (!DataSupport.where("key = ? ", key).find(BeanInspectionReport.class).isEmpty()) {
+                llEmpty.setVisibility(View.GONE);
                 mList = DataSupport.where("key = ? ", key).find(BeanInspectionReport.class);
                 LinearLayoutManager lmg = new LinearLayoutManager(this);
                 recyclerview.setLayoutManager(lmg);
                 adapter = new InspectionReportAdapter(this, mList);
                 recyclerview.setAdapter(adapter);
             }
-        } else if (key.equals(Constants.FOR_LIST)){
+        } else if (key.equals(Constants.FOR_LIST)) {
             mList = DataSupport.findAll(BeanInspectionReport.class);
             if (mList.size() > 0) {
+                llEmpty.setVisibility(View.GONE);
                 Collections.reverse(mList);//倒序
                 LinearLayoutManager lmg = new LinearLayoutManager(this);
                 recyclerview.setLayoutManager(lmg);
@@ -116,14 +120,14 @@ public class InspectionReport extends BaseActivity {
                         List<String> listObjectStr = JSONArray.parseObject(str, List.class);
                         BeanInspectionReport beanInspectionReport;
                         for (String objectStr : listObjectStr) {
-                                beanInspectionReport = JSON.parseObject(objectStr, BeanInspectionReport.class);
-                                if (DataSupport.select("key").where("key = ? ", beanInspectionReport.getKey()).find(BeanInspectionReport.class).isEmpty()) {
-                                    beanInspectionReport.setSPECIMEN(JSON.toJSONString(beanInspectionReport.getTestList()));
-                                    beanInspectionReport.save();
-                                    hasNewData = true;
-                                }
+                            beanInspectionReport = JSON.parseObject(objectStr, BeanInspectionReport.class);
+                            if (DataSupport.select("key").where("key = ? ", beanInspectionReport.getKey()).find(BeanInspectionReport.class).isEmpty()) {
+                                beanInspectionReport.setSPECIMEN(JSON.toJSONString(beanInspectionReport.getTestList()));
+                                beanInspectionReport.save();
+                                hasNewData = true;
                             }
                         }
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

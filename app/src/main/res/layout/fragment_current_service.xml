@@ -4,6 +4,30 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <LinearLayout
+        android:id="@+id/ll_empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="50px"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="600px"
+            android:layout_height="260px"
+            android:src="@drawable/ic_no_alarm_message" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20px"
+            android:gravity="center"
+            android:text="还没有图文咨询消息噢~"
+            android:textSize="16sp" />
+    </LinearLayout>
+
     <ListView
         android:id="@+id/lv_current_service"
         android:layout_width="match_parent"

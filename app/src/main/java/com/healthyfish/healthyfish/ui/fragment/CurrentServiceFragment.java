@@ -10,8 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -22,8 +22,8 @@ import com.healthyfish.healthyfish.POJO.BeanBaseKeyRemReq;
 import com.healthyfish.healthyfish.POJO.BeanBaseResp;
 import com.healthyfish.healthyfish.POJO.BeanDoctorChatInfo;
 import com.healthyfish.healthyfish.POJO.BeanDoctorInfo;
-import com.healthyfish.healthyfish.POJO.BeanPersonalInformation;
 import com.healthyfish.healthyfish.POJO.BeanInterrogationServiceDoctorList;
+import com.healthyfish.healthyfish.POJO.BeanPersonalInformation;
 import com.healthyfish.healthyfish.POJO.BeanServiceList;
 import com.healthyfish.healthyfish.POJO.BeanUserListValueReq;
 import com.healthyfish.healthyfish.POJO.BeanUserLoginReq;
@@ -31,13 +31,13 @@ import com.healthyfish.healthyfish.POJO.ImMsgBean;
 import com.healthyfish.healthyfish.R;
 import com.healthyfish.healthyfish.adapter.InterrogationServiceAdapter;
 import com.healthyfish.healthyfish.eventbus.WeChatReceiveMsg;
-import com.healthyfish.healthyfish.ui.activity.interrogation.ChoiceService;
 import com.healthyfish.healthyfish.ui.activity.interrogation.HealthyChat;
 import com.healthyfish.healthyfish.utils.DateTimeUtil;
 import com.healthyfish.healthyfish.utils.MySharedPrefUtil;
 import com.healthyfish.healthyfish.utils.MyToast;
 import com.healthyfish.healthyfish.utils.OkHttpUtils;
 import com.healthyfish.healthyfish.utils.RetrofitManagerUtils;
+import com.nostra13.universalimageloader.utils.L;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -45,12 +45,9 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.litepal.crud.DataSupport;
 
 import java.io.IOException;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,8 +57,6 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import okhttp3.ResponseBody;
 import rx.Subscriber;
-
-import static com.healthyfish.healthyfish.constant.Constants.HttpHealthyFishyUrl;
 
 /**
  * 描述：问诊服务中当前服务选项页面
@@ -75,6 +70,8 @@ public class CurrentServiceFragment extends Fragment {
     @BindView(R.id.lv_current_service)
     ListView lvCurrentService;
     Unbinder unbinder;
+    @BindView(R.id.ll_empty)
+    LinearLayout llEmpty;
 
     private BeanUserLoginReq beanUserLoginReq = new BeanUserLoginReq();
     private BeanDoctorInfo beanDoctorInfo = new BeanDoctorInfo();
@@ -94,7 +91,7 @@ public class CurrentServiceFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         rootView = inflater.inflate(R.layout.fragment_current_service, container, false);
         unbinder = ButterKnife.bind(this, rootView);
-        lvListener();
+
         EventBus.getDefault().register(this);
 
         String user = MySharedPrefUtil.getValue("user");
@@ -107,8 +104,10 @@ public class CurrentServiceFragment extends Fragment {
 
             mList.clear();
             initListView();
+            refreshDataList();
+            lvListener();
+            uid = MyApplication.uid;
         }
-        uid = MyApplication.uid;
 
         return rootView;
     }
@@ -144,7 +143,6 @@ public class CurrentServiceFragment extends Fragment {
      * 初始化ListView
      */
     private void initListView() {
-        refreshDataList();
         mAdapter = new InterrogationServiceAdapter(getActivity(), mList);
         lvCurrentService.setAdapter(mAdapter);
     }
@@ -158,6 +156,13 @@ public class CurrentServiceFragment extends Fragment {
         Map<String, Object> map;
         // 获取购买过问诊服务的医生列表
         List<BeanInterrogationServiceDoctorList> purchaseList = DataSupport.findAll(BeanInterrogationServiceDoctorList.class);
+
+        if (purchaseList.size() <= 0) {
+            llEmpty.setVisibility(View.VISIBLE);
+            return;
+        } else {
+            llEmpty.setVisibility(View.GONE);
+        }
 
         for (BeanInterrogationServiceDoctorList bean : purchaseList) {
             map = new HashMap<String, Object>();
@@ -217,6 +222,10 @@ public class CurrentServiceFragment extends Fragment {
                 }
             });
         }
+        if (null != mAdapter) {
+            mAdapter.notifyDataSetChanged();
+        }
+
     }
 
     /**
@@ -226,7 +235,10 @@ public class CurrentServiceFragment extends Fragment {
     public void onUpdateSendingStatus(ImMsgBean msg) {
         // 刷新列表状态
         mList.clear();
-        initListView();
+        if (null == mAdapter) {
+            initListView();
+        }
+        refreshDataList();
     }
 
     /**
@@ -234,16 +246,18 @@ public class CurrentServiceFragment extends Fragment {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateSendingStatus(WeChatReceiveMsg msg) {
-
         mList.clear();
-        initListView();
+        if (null == mAdapter) {
+            initListView();
+        }
+        refreshDataList();
     }
 
     @Override
     public void onResume() {
         super.onResume();
         mList.clear();
-        initListView();
+        refreshDataList();
     }
 
     @Override
@@ -304,33 +318,38 @@ public class CurrentServiceFragment extends Fragment {
                             if (!TextUtils.isEmpty(strJsonBeanPersonalInformation)) {
                                 if (strJsonBeanPersonalInformation.substring(0, 1).equals("{")) {
                                     BeanPersonalInformation beanPersonalInformation = JSON.parseObject(strJsonBeanPersonalInformation, BeanPersonalInformation.class);
-                                    boolean isSave = beanPersonalInformation.saveOrUpdate("key = ?", key);
-                                    if (!isSave) {
-                                        if (!beanPersonalInformation.saveOrUpdate("key = ?", key)) {
-                                            MyToast.showToast(getContext(), "更新个人信息失败");
-                                        }
-                                    }
-                                } else {
-                                    MyToast.showToast(getContext(), "个人信息有误,请更新您的个人信息");
+                                    beanPersonalInformation.saveOrUpdate("key = ?", key);
+//                                    boolean isSave = beanPersonalInformation.saveOrUpdate("key = ?", key);
+//                                    if (!isSave) {
+//                                        if (!beanPersonalInformation.saveOrUpdate("key = ?", key)) {
+//                                            MyToast.showToast(getContext(), "更新个人信息失败");
+//                                        }
+//                                    }
                                 }
+//                                else {
+//                                    MyToast.showToast(getContext(), "个人信息有误,请更新您的个人信息");
+//                                }
                             } else {
                                 //MyToast.showToast(MainActivity.this, "您还没有填写个人信息，请填写您的个人信息");//首页不用提醒，在个人中心页面再提醒
                             }
                             MyApplication.isIsFirstUpdatePersonalInfo = false;
-                        } else {
-                            MyToast.showToast(getContext(), "更新个人信息失败");
                         }
-                    } else {
-                        MyToast.showToast(getContext(), "加载个人信息出错啦");
+//                        else {
+//                            MyToast.showToast(getContext(), "更新个人信息失败");
+//                        }
                     }
-                } else {
-                    MyToast.showToast(getContext(), "更新个人信息失败");
+//                    else {
+//                        MyToast.showToast(getContext(), "加载个人信息出错啦");
+//                    }
                 }
+//                else {
+//                    MyToast.showToast(getContext(), "更新个人信息失败");
+//                }
             }
 
             @Override
             public void onError(Throwable e) {
-                MyToast.showToast(getContext(), "更新个人信息失败,请更新您的个人信息");
+//                MyToast.showToast(getContext(), "更新个人信息失败,请更新您的个人信息");
             }
 
             @Override
@@ -350,11 +369,11 @@ public class CurrentServiceFragment extends Fragment {
      * 选择图文咨询操作
      */
     private void buyPictureConsultingService() {
-        if (MyApplication.isFirstUpdateMyService) {
-            upDateServiceListReq(uid);
-        } else {
-            getMyServiceFromDB(uid);
-        }
+//        if (MyApplication.isFirstUpdateMyService) {
+//            upDateServiceListReq(uid);
+//        } else {
+        getMyServiceFromDB(uid);
+//        }
     }
 
     /**
@@ -369,40 +388,44 @@ public class CurrentServiceFragment extends Fragment {
         beanDoctorChatInfo.setImgUrl(beanDoctorInfo.getImgUrl());
         beanDoctorChatInfo.setServiceType("pictureConsulting");
 
-        String serviceKey = "service_" + uid + "_" + "PTC_" + doctorPhone;
-//        Log.i("LYQ", "serviceKey:" + serviceKey);
+        Intent intent = new Intent(MyApplication.getContetxt(), HealthyChat.class);
+        intent.putExtra("BeanDoctorChatInfo", beanDoctorChatInfo);
+        startActivity(intent);
 
-        List<BeanServiceList> serviceLists = DataSupport.where("phoneNumber = ?", doctorPhone).find(BeanServiceList.class);//查找数据库
-        if (!serviceLists.isEmpty()) {//不为空则购买过该医生的图文咨询服务
-            BeanServiceList beanServiceList = serviceLists.get(0);
-
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm");
-            Date endDate = dateFormat.parse(beanServiceList.getEndTime(), new ParsePosition(0));
-            Date currentDate = new Date(System.currentTimeMillis());
-
-            if (currentDate.getTime() <= endDate.getTime()) {//服务未过期
-                Intent intent = new Intent(MyApplication.getContetxt(), HealthyChat.class);
-                intent.putExtra("BeanDoctorChatInfo", beanDoctorChatInfo);
-                startActivity(intent);
-                // 添加用户已购买服务的医生列表
-                //addPictureConsultServiceDoctorList();
-            } else {//服务已过期
-                DataSupport.delete(BeanServiceList.class, beanServiceList.getId());//删除本地数据库该购买服务记录
-                deleteServiceReq(serviceKey);//删除服务器端该购买服务记录
-
-                //goToBuyService(serviceKey, true, beanDoctorChatInfo);
-                /*Intent intent = new Intent(MyApplication.getContetxt(), ChoiceService.class);
-                intent.putExtra("BeanDoctorChatInfo", beanDoctorChatInfo);
-                startActivity(intent);*/
-                Toast.makeText(MyApplication.getContetxt(), "服务已过期，请重新购买服务", Toast.LENGTH_SHORT).show();
-            }
-        } else {//空则没有购买过该医生的图文咨询服务或者已过期
-            //goToBuyService(serviceKey, false, beanDoctorChatInfo);
-            /*Intent intent = new Intent(MyApplication.getContetxt(), ChoiceService.class);
-            intent.putExtra("BeanDoctorChatInfo", beanDoctorChatInfo);
-            startActivity(intent);*/
-            Toast.makeText(MyApplication.getContetxt(), "服务已过期，请重新购买服务", Toast.LENGTH_SHORT).show();
-        }
+//        String serviceKey = "service_" + uid + "_" + "PTC_" + doctorPhone;
+////        Log.i("LYQ", "serviceKey:" + serviceKey);
+//
+//        List<BeanServiceList> serviceLists = DataSupport.where("phoneNumber = ?", doctorPhone).find(BeanServiceList.class);//查找数据库
+//        if (!serviceLists.isEmpty()) {//不为空则购买过该医生的图文咨询服务
+//            BeanServiceList beanServiceList = serviceLists.get(0);
+//
+//            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm");
+//            Date endDate = dateFormat.parse(beanServiceList.getEndTime(), new ParsePosition(0));
+//            Date currentDate = new Date(System.currentTimeMillis());
+//
+//            if (currentDate.getTime() <= endDate.getTime()) {//服务未过期
+//                Intent intent = new Intent(MyApplication.getContetxt(), HealthyChat.class);
+//                intent.putExtra("BeanDoctorChatInfo", beanDoctorChatInfo);
+//                startActivity(intent);
+//                // 添加用户已购买服务的医生列表
+//                //addPictureConsultServiceDoctorList();
+//            } else {//服务已过期
+//                DataSupport.delete(BeanServiceList.class, beanServiceList.getId());//删除本地数据库该购买服务记录
+//                deleteServiceReq(serviceKey);//删除服务器端该购买服务记录
+//
+//                //goToBuyService(serviceKey, true, beanDoctorChatInfo);
+//                /*Intent intent = new Intent(MyApplication.getContetxt(), ChoiceService.class);
+//                intent.putExtra("BeanDoctorChatInfo", beanDoctorChatInfo);
+//                startActivity(intent);*/
+//                Toast.makeText(MyApplication.getContetxt(), "服务已过期，请重新购买服务", Toast.LENGTH_SHORT).show();
+//            }
+//        } else {//空则没有购买过该医生的图文咨询服务或者已过期
+//            //goToBuyService(serviceKey, false, beanDoctorChatInfo);
+//            /*Intent intent = new Intent(MyApplication.getContetxt(), ChoiceService.class);
+//            intent.putExtra("BeanDoctorChatInfo", beanDoctorChatInfo);
+//            startActivity(intent);*/
+//            Toast.makeText(MyApplication.getContetxt(), "服务已过期，请重新购买服务", Toast.LENGTH_SHORT).show();
+//        }
     }
 
 

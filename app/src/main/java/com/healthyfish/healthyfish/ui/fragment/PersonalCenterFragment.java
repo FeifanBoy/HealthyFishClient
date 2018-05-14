@@ -395,7 +395,7 @@ public class PersonalCenterFragment extends Fragment {
             @Override
             public void onError(Throwable e) {
 
-                MyToast.showToast(getActivity(), "获取个人信息失败,请更新您的个人信息");
+//                MyToast.showToast(getActivity(), "获取个人信息失败,请更新您的个人信息");
 
                 initWidget();
 
@@ -405,7 +405,7 @@ public class PersonalCenterFragment extends Fragment {
             public void onNext(ResponseBody responseBody) {
                 try {
                     resp = responseBody.string();
-                    Log.i("LYQ", "个人中心获取用户信息响应：" + resp);
+//                    Log.i("LYQ", "个人中心获取用户信息响应：" + resp);
                     if (!TextUtils.isEmpty(resp)) {
                         if (resp.toString().substring(0, 1).equals("{")) {
                             BeanBaseKeyGetResp beanBaseKeyGetResp = JSON.parseObject(resp, BeanBaseKeyGetResp.class);
@@ -414,25 +414,31 @@ public class PersonalCenterFragment extends Fragment {
                                 if (!TextUtils.isEmpty(strJsonBeanPersonalInformation)) {
                                     if (strJsonBeanPersonalInformation.substring(0, 1).equals("{")) {
                                         beanPersonalInformation = JSON.parseObject(strJsonBeanPersonalInformation, BeanPersonalInformation.class);
-                                        boolean isSave = beanPersonalInformation.saveOrUpdate("key = ?", key);
-                                        if (!isSave) {
-                                            MyToast.showToast(getActivity(), "保存个人信息失败");
-                                        }
-                                    } else {
-                                        Toast.makeText(getActivity(), "个人信息有误,请更新您的个人信息", Toast.LENGTH_SHORT).show();
+                                        beanPersonalInformation.saveOrUpdate("key = ?", key);
+//                                        boolean isSave = beanPersonalInformation.saveOrUpdate("key = ?", key);
+//                                        if (!isSave) {
+//                                            MyToast.showToast(getActivity(), "保存个人信息失败");
+//                                        }
                                     }
-                                } else {
-                                    MyToast.showToast(getActivity(), "您还没有填写个人信息，请填写您的个人信息");
+//                                    else {
+//                                        Toast.makeText(getActivity(), "个人信息有误,请更新您的个人信息", Toast.LENGTH_SHORT).show();
+//                                    }
                                 }
-                            } else {
-                                MyToast.showToast(getActivity(), "获取个人信息失败");
+//                                else {
+//                                    MyToast.showToast(getActivity(), "您还没有填写个人信息，请填写您的个人信息");
+//                                }
                             }
-                        } else {
-                            MyToast.showToast(getActivity(), "加载个人信息出错啦");
+//                            else {
+//                                MyToast.showToast(getActivity(), "获取个人信息失败");
+//                            }
                         }
-                    } else {
-                        MyToast.showToast(getActivity(), "获取个人信息失败");
+//                        else {
+//                            MyToast.showToast(getActivity(), "加载个人信息出错啦");
+//                        }
                     }
+//                    else {
+//                        MyToast.showToast(getActivity(), "获取个人信息失败");
+//                    }
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -495,9 +501,10 @@ public class PersonalCenterFragment extends Fragment {
                                 }
                             }
                             getUserPhyFromDB(uid);
-                        } else {
-                            MyToast.showToast(getActivity(), "加载个人体质信息出错");
                         }
+//                        else {
+//                            MyToast.showToast(getActivity(), "加载个人体质信息出错");
+//                        }
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

@@ -27,6 +27,7 @@ import com.healthyfish.healthyfish.POJO.BeanUserLogoutReq;
 import com.healthyfish.healthyfish.R;
 import com.healthyfish.healthyfish.ui.activity.BaseActivity;
 import com.healthyfish.healthyfish.ui.activity.ForgetPassword;
+import com.healthyfish.healthyfish.ui.activity.Login;
 import com.healthyfish.healthyfish.utils.MySharedPrefUtil;
 import com.healthyfish.healthyfish.utils.OkHttpUtils;
 import com.healthyfish.healthyfish.utils.RetrofitManagerUtils;
@@ -134,9 +135,9 @@ public class SetUp extends BaseActivity {
                     DataSupport.deleteAll(BeanInspectionReport.class);//清除检查报告化验单
                     DataSupport.deleteAll(BeanPrescriptiom.class);//清除处方
                     EventBus.getDefault().post(new BeanPersonalInformation(false));
-                    Intent intent = new Intent(SetUp.this, MainActivity.class);
-                    //startActivity(intent);
-                    removeALLActivity();
+                    Intent intent = new Intent(SetUp.this, Login.class);
+                    startActivity(intent);
+                    //removeALLActivity();
                     //finish();
                 }
 

@@ -651,7 +651,7 @@ class MqttMsgSystemInfo {
 
             @Override
             public void onError(Throwable e) {
-                Toast.makeText(MyApplication.getContetxt(), "出错啦", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MyApplication.getContetxt(), "加载出错啦", Toast.LENGTH_SHORT).show();
             }
 
             @Override

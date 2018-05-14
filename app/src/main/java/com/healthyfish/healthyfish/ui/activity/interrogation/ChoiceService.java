@@ -511,11 +511,11 @@ public class ChoiceService extends BaseActivity {
      */
     private void buyPictureConsultingService() {
         if (isOpenPictureConsulting) {
-            if (MyApplication.isFirstUpdateMyService) {
-                upDateServiceListReq(uid);
-            } else {
+//            if (MyApplication.isFirstUpdateMyService) {
+//                upDateServiceListReq(uid);
+//            } else {
                 getMyServiceFromDB(uid);
-            }
+//            }
         } else {
             MyToast.showToast(mContext, "该医生暂未开通此服务");
         }
@@ -535,35 +535,44 @@ public class ChoiceService extends BaseActivity {
         beanDoctorChatInfo.setImgUrl(HttpHealthyFishyUrl + beanDoctorInfo.getImgUrl());
         beanDoctorChatInfo.setServiceType("pictureConsulting");
 
-        String serviceKey = "service_" + uid + "_" + "PTC_" + doctorPhone;
-//        Log.i("LYQ", "serviceKey:" + serviceKey);
+        addPictureConsultServiceDoctorList();
 
-        List<BeanServiceList> serviceLists = DataSupport.where("phoneNumber = ?", doctorPhone).find(BeanServiceList.class);//查找数据库
-        if (!serviceLists.isEmpty()) {//不为空则购买过该医生的图文咨询服务
-            BeanServiceList beanServiceList = serviceLists.get(0);
+        Intent intent = new Intent(this, HealthyChat.class);
+        intent.putExtra("BeanDoctorChatInfo", beanDoctorChatInfo);
+        // 跳转到聊天界面
+        startActivity(intent);
 
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm");
-            Date endDate = dateFormat.parse(beanServiceList.getEndTime(), new ParsePosition(0));
-            Date currentDate = new Date(System.currentTimeMillis());
 
-            if (currentDate.getTime() <= endDate.getTime()) {//服务未过期
-                Intent intent = new Intent(this, HealthyChat.class);
-                intent.putExtra("BeanDoctorChatInfo", beanDoctorChatInfo);
-                // 跳转到聊天界面
-                startActivity(intent);
-                // 测试跳转到购买服务
-                //goToBuyService(serviceKey, true, beanDoctorChatInfo);
-                // 添加用户已购买服务的医生列表
-                addPictureConsultServiceDoctorList();
-            } else {//服务已过期
-                DataSupport.delete(BeanServiceList.class, beanServiceList.getId());//删除本地数据库该购买服务记录
-                deleteServiceReq(serviceKey);//删除服务器端该购买服务记录
 
-                goToBuyService(serviceKey, true, beanDoctorChatInfo);
-            }
-        } else {//空则没有购买过该医生的图文咨询服务或者已过期
-            goToBuyService(serviceKey, false, beanDoctorChatInfo);
-        }
+//        String serviceKey = "service_" + uid + "_" + "PTC_" + doctorPhone;
+////        Log.i("LYQ", "serviceKey:" + serviceKey);
+//
+//        List<BeanServiceList> serviceLists = DataSupport.where("phoneNumber = ?", doctorPhone).find(BeanServiceList.class);//查找数据库
+//        if (!serviceLists.isEmpty()) {//不为空则购买过该医生的图文咨询服务
+//            BeanServiceList beanServiceList = serviceLists.get(0);
+//
+//            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm");
+//            Date endDate = dateFormat.parse(beanServiceList.getEndTime(), new ParsePosition(0));
+//            Date currentDate = new Date(System.currentTimeMillis());
+//
+//            if (currentDate.getTime() <= endDate.getTime()) {//服务未过期
+//                Intent intent = new Intent(this, HealthyChat.class);
+//                intent.putExtra("BeanDoctorChatInfo", beanDoctorChatInfo);
+//                // 跳转到聊天界面
+//                startActivity(intent);
+//                // 测试跳转到购买服务
+//                //goToBuyService(serviceKey, true, beanDoctorChatInfo);
+//                // 添加用户已购买服务的医生列表
+//                addPictureConsultServiceDoctorList();
+//            } else {//服务已过期
+//                DataSupport.delete(BeanServiceList.class, beanServiceList.getId());//删除本地数据库该购买服务记录
+//                deleteServiceReq(serviceKey);//删除服务器端该购买服务记录
+//
+//                goToBuyService(serviceKey, true, beanDoctorChatInfo);
+//            }
+//        } else {//空则没有购买过该医生的图文咨询服务或者已过期
+//            goToBuyService(serviceKey, false, beanDoctorChatInfo);
+//        }
     }
 
     /**

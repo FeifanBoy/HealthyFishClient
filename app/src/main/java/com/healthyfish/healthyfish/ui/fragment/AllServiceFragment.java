@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.healthyfish.healthyfish.R;
@@ -34,6 +35,8 @@ public class AllServiceFragment extends Fragment {
     @BindView(R.id.lv_all_service)
     ListView lvAllService;
     Unbinder unbinder;
+    @BindView(R.id.ll_empty)
+    LinearLayout llEmpty;
 
     private View rootView;
     private InterrogationServiceAdapter mAdapter;
@@ -44,9 +47,10 @@ public class AllServiceFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         rootView = inflater.inflate(R.layout.fragment_all_service, container, false);
         unbinder = ButterKnife.bind(this, rootView);
-        List<Map<String, Object>> list = initData();
+        //List<Map<String, Object>> list = initData();
         // initListView(list);
-        lvListener(list);
+        //lvListener(list);
+
         return rootView;
     }
 

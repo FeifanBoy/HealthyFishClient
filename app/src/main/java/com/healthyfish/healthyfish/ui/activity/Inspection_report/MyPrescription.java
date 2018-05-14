@@ -1,29 +1,24 @@
 package com.healthyfish.healthyfish.ui.activity.Inspection_report;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.healthyfish.healthyfish.POJO.BeanPrescriptiom;
-import com.healthyfish.healthyfish.POJO.BeanPrescription;
 import com.healthyfish.healthyfish.POJO.BeanUserListValueReq;
-import com.healthyfish.healthyfish.POJO.BeanUserLoginReq;
-import com.healthyfish.healthyfish.POJO.BeanUserRetrPresReq;
 import com.healthyfish.healthyfish.R;
 import com.healthyfish.healthyfish.adapter.PrescriptionRvAdapter;
 import com.healthyfish.healthyfish.constant.Constants;
 import com.healthyfish.healthyfish.ui.activity.BaseActivity;
-import com.healthyfish.healthyfish.utils.MySharedPrefUtil;
 import com.healthyfish.healthyfish.utils.OkHttpUtils;
 import com.healthyfish.healthyfish.utils.RetrofitManagerUtils;
 
@@ -47,6 +42,9 @@ public class MyPrescription extends BaseActivity {
     Toolbar toolbar;
     @BindView(R.id.rv_prescription)
     RecyclerView rvPrescription;
+    @BindView(R.id.ll_empty)
+    LinearLayout llEmpty;
+
     private PrescriptionRvAdapter adapter;
     private boolean hasNewData = false;//访问网络后是否有新数据
     private List<BeanPrescriptiom> list = new ArrayList<>();
@@ -83,9 +81,10 @@ public class MyPrescription extends BaseActivity {
                 initData(hasNewData);//如果 有新数据则通知更新列表
 
             }
+
             @Override
             public void onError(Throwable e) {
-                Toast.makeText(MyPrescription.this, "出错啦", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MyPrescription.this, "加载出错啦", Toast.LENGTH_SHORT).show();
 
             }
 
@@ -106,6 +105,7 @@ public class MyPrescription extends BaseActivity {
 
     /**
      * 对比本地数据库的key，如果不存在，则保存到数据库中
+     *
      * @param str 请求相应的数据responseBody.string()
      */
     private void saveNewData2DB(String str) {
@@ -154,16 +154,20 @@ public class MyPrescription extends BaseActivity {
      */
     private void initDataFromDB() {
         String key = getIntent().getStringExtra("key");
-        if (!key.equals(Constants.FOR_LIST)){
-            if ( !DataSupport.where("key = ? ", key).find(BeanPrescriptiom.class).isEmpty()){
+        if (!key.equals(Constants.FOR_LIST)) {
+            if (!DataSupport.where("key = ? ", key).find(BeanPrescriptiom.class).isEmpty()) {
+                llEmpty.setVisibility(View.GONE);
                 list = DataSupport.where("key = ? ", key).find(BeanPrescriptiom.class);
                 LinearLayoutManager lmg = new LinearLayoutManager(this);
                 rvPrescription.setLayoutManager(lmg);
                 adapter = new PrescriptionRvAdapter(this, list, toolbar);
                 rvPrescription.setAdapter(adapter);
             }
-        }else if (key.equals(Constants.FOR_LIST)){
+        } else if (key.equals(Constants.FOR_LIST)) {
             list = DataSupport.findAll(BeanPrescriptiom.class);
+            if (list.size() > 0) {
+                llEmpty.setVisibility(View.GONE);
+            }
             Collections.reverse(list);
             LinearLayoutManager lmg = new LinearLayoutManager(this);
             rvPrescription.setLayoutManager(lmg);
@@ -177,6 +181,7 @@ public class MyPrescription extends BaseActivity {
      */
     private void initData(boolean hasNewData) {
         if (hasNewData) {
+            llEmpty.setVisibility(View.GONE);
             adapter.notifyDataSetChanged();
         }
 

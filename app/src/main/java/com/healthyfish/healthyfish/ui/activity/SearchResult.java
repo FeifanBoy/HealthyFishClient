@@ -27,11 +27,13 @@ import com.healthyfish.healthyfish.POJO.BeanSearchRespItem;
 import com.healthyfish.healthyfish.R;
 import com.healthyfish.healthyfish.adapter.ChoiceDoctorLvAdapter;
 import com.healthyfish.healthyfish.ui.activity.interrogation.ChoiceService;
+import com.healthyfish.healthyfish.utils.DoctorPostComparator;
 import com.healthyfish.healthyfish.utils.OkHttpUtils;
 import com.healthyfish.healthyfish.utils.RetrofitManagerUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -189,7 +191,7 @@ public class SearchResult extends BaseActivity {
                 public void onNext(ResponseBody responseBody) {
                     try {
                         doctorInfoResp = responseBody.string();
-                        Log.e("LYQ", "搜索医生信息结果：" + doctorInfoResp);
+                        //Log.e("LYQ", "搜索医生信息结果：" + doctorInfoResp);
                         BeanHospDeptDoctListRespItem beanHospDeptListRespItem = JSON.parseObject(doctorInfoResp, BeanHospDeptDoctListRespItem.class);
                         doctorList.add(beanHospDeptListRespItem); //用于传递数据到下一页面用的list
                         BeanDoctorInfo data = new BeanDoctorInfo();

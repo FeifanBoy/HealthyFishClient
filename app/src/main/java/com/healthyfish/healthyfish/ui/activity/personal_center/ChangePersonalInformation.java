@@ -253,7 +253,7 @@ public class ChangePersonalInformation extends BaseActivity {
         //personalInformation.setLogin(false);//不传值在获取个人信息时会空指针异常
         String jsonReq = JSON.toJSONString(personalInformation);
 
-        Log.i("LYQ", "jsonReq:" + jsonReq);
+//        Log.i("LYQ", "jsonReq:" + jsonReq);
         BeanBaseKeySetReq beanBaseKeySetReq = new BeanBaseKeySetReq();
         beanBaseKeySetReq.setKey(key);
         beanBaseKeySetReq.setValue(jsonReq);
@@ -288,19 +288,19 @@ public class ChangePersonalInformation extends BaseActivity {
                 } else {
                     MyToast.showToast(ChangePersonalInformation.this, "修改个人信息失败，请重试");
                 }
-                Log.i("LYQ", "上传请求onCompleted");
+//                Log.i("LYQ", "上传请求onCompleted");
             }
 
             @Override
             public void onError(Throwable e) {
-                MyToast.showToast(ChangePersonalInformation.this, "修改个人信息失败，" + e.toString());
+                MyToast.showToast(ChangePersonalInformation.this, "修改个人信息失败，请重试");
             }
 
             @Override
             public void onNext(ResponseBody responseBody) {
                 try {
                     resp = responseBody.string();
-                    Log.i("LYQ", "上传请求返回：" + resp);
+//                    Log.i("LYQ", "上传请求返回：" + resp);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

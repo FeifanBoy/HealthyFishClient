@@ -1,5 +1,6 @@
 package com.healthyfish.healthyfish.utils;
 
+import com.healthyfish.healthyfish.POJO.BeanDoctorInfo;
 import com.healthyfish.healthyfish.POJO.BeanHospDeptDoctListRespItem;
 
 import java.util.Comparator;
@@ -14,6 +15,7 @@ public class DoctorPostComparator implements Comparator {
     public int compare(Object o1, Object o2) {
         BeanHospDeptDoctListRespItem bean1 = (BeanHospDeptDoctListRespItem) o1;
         BeanHospDeptDoctListRespItem bean2 = (BeanHospDeptDoctListRespItem) o2;
+
         if (bean1.getPRICE() < bean2.getPRICE()) {//当返回1时大于小于号分别表示升序和降序，当返回-1时反之，需要配合才能决定排序方向
             return 1;
         } else if (bean1.getPRICE() == bean2.getPRICE()) {

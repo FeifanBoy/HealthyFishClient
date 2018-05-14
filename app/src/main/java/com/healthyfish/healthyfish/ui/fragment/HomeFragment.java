@@ -39,6 +39,8 @@ import com.healthyfish.healthyfish.adapter.WholeSchemeAdapter;
 import com.healthyfish.healthyfish.constant.Constants;
 import com.healthyfish.healthyfish.eventbus.NoticeMessage;
 import com.healthyfish.healthyfish.eventbus.RefresHomeMsg;
+import com.healthyfish.healthyfish.eventbus.RefreshMyAppointmentMsg;
+import com.healthyfish.healthyfish.eventbus.ToHealthyWork;
 import com.healthyfish.healthyfish.eventbus.WeChatReceiveSysMdrMsg;
 import com.healthyfish.healthyfish.ui.activity.HealthNews;
 import com.healthyfish.healthyfish.ui.activity.HomeSearchResult;
@@ -189,9 +191,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     private void initAll() {
         initBannerRequest();//网络访问获取轮播图内容
-        if (Constants.NUMBER_SYS_INFO > 0) {
-            initInfoPrmopt(String.valueOf(Constants.NUMBER_SYS_INFO));
-        }
+//        if (Constants.NUMBER_SYS_INFO > 0) {
+//            initInfoPrmopt(String.valueOf(Constants.NUMBER_SYS_INFO));
+//        }
         initFunctionMenu();//初始化菜单监听
 
         new Thread(new Runnable() {
@@ -230,7 +232,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
                     @Override
                     public void onError(Throwable e) {
-                        Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
@@ -244,7 +246,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                                 //Log.i("imgstr", beanHomeImgSlideRespItem.getImg());
                                 desc.add(beanHomeImgSlideRespItem.getDesc());
                             }
-                            setbanner(imgs, desc);//给轮播图设置图片
+                            setBanner(imgs, desc);//给轮播图设置图片
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -260,7 +262,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
      * @param imgs 图片地址链接
      * @param desc 描述
      */
-    private void setbanner(List<String> imgs, List<String> desc) {
+    private void setBanner(List<String> imgs, List<String> desc) {
         //轮播图
         bannerGuideContent.setAdapter(new BGABanner.Adapter<ImageView, String>() {
             @Override
@@ -545,6 +547,18 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                         }
                     }
                 });
+
+        workShopRecyclerview.addOnItemTouchListener(new MyRecyclerViewOnItemListener(mContext, workShopRecyclerview, new MyRecyclerViewOnItemListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                EventBus.getDefault().post(new ToHealthyWork());
+            }
+
+            @Override
+            public void onItemLongClick(View view, int position) {
+
+            }
+        }));
     }
 
 
@@ -553,7 +567,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         super.onDestroyView();
         //unbinder.unbind();
         EventBus.getDefault().unregister(this);
-        unbinder.unbind();
+        //unbinder.unbind();
     }
 
     @Override
@@ -561,7 +575,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         switch (v.getId()) {
             case R.id.topbar_info:
                 Constants.NUMBER_SYS_INFO = 0;
-                initInfoPrmopt("0");
+                //initInfoPrmopt("0");
                 startActivity(new Intent(mContext, MyNews.class));
                 break;
             case R.id.fm_interrogation2:
@@ -569,7 +583,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.fm_med_rec:
-                if (MySharedPrefUtil.getValue("user") == "") {
+                if (TextUtils.isEmpty(MySharedPrefUtil.getValue("user"))) {
                     Toast.makeText(getActivity(), "您还没有登录哟", Toast.LENGTH_SHORT).show();
                 } else {
                     Intent intent_med_rec = new Intent(mContext, AllMedRec.class);

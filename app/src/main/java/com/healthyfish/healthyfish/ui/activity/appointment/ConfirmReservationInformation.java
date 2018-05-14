@@ -1,8 +1,10 @@
 package com.healthyfish.healthyfish.ui.activity.appointment;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -14,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.healthyfish.healthyfish.MainActivity;
@@ -28,6 +31,7 @@ import com.healthyfish.healthyfish.POJO.BeanWeekAndDate;
 import com.healthyfish.healthyfish.R;
 import com.healthyfish.healthyfish.ui.activity.BaseActivity;
 import com.healthyfish.healthyfish.ui.activity.interrogation.ChoiceService;
+import com.healthyfish.healthyfish.ui.activity.personal_center.ChangePersonalInformation;
 import com.healthyfish.healthyfish.utils.AutoLogin;
 import com.healthyfish.healthyfish.utils.MyToast;
 import com.healthyfish.healthyfish.utils.OkHttpUtils;
@@ -145,13 +149,34 @@ public class ConfirmReservationInformation extends BaseActivity {
                         !TextUtils.isEmpty(visitingCard) &&
                         !TextUtils.isEmpty(phoneNumber) && phoneNumber.length() == 11) {
 
-                    CertifiedVisitingCard();//验证就诊卡
+                    //选择支付方法
+                    chooseGenderDialog();
 
                 } else {
                     MyToast.showToast(this, "请准确填写相关信息或选择就诊人");
                 }
                 break;
         }
+    }
+
+    /**
+     * 支付方式选择对话框
+     */
+    private void chooseGenderDialog() {
+        //在线支付暂未开通
+        final String[] strings = new String[]{ "线下支付"};
+        new AlertDialog.Builder(this)
+                .setTitle("请选择支付方式")
+                .setSingleChoiceItems(strings, 0, null)
+                .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //验证就诊卡并挂号
+                        CertifiedVisitingCard();
+                    }
+                })
+                .show();
+
     }
 
     /**
@@ -223,7 +248,7 @@ public class ConfirmReservationInformation extends BaseActivity {
             @Override
             public void onError(Throwable e) {
                 MyToast.showToast(ConfirmReservationInformation.this, "挂号失败,请检查网络状态");
-                Log.e("LYQ", "ConfirmReservationInformation_RegistrationRequest_onError："+e.toString());
+                Log.e("LYQ", "ConfirmReservationInformation_RegistrationRequest_onError：" + e.toString());
             }
 
             @Override
@@ -285,7 +310,7 @@ public class ConfirmReservationInformation extends BaseActivity {
      * 保存就诊人数据到数据库
      */
     private void saveData() {
-        boolean isSave = false;
+        //boolean isSave = false;
         List<BeanVisitingPerson> List = DataSupport.where("phoneID = ? and hospital = ? and visitingPerson = ? and visitingCard = ?", id, hospital, name, visitingCard).find(BeanVisitingPerson.class);
         if (List.size() == 0) {
             visitingPerson = new BeanVisitingPerson();
@@ -296,10 +321,11 @@ public class ConfirmReservationInformation extends BaseActivity {
             visitingPerson.setVisitingCard(visitingCard);
             visitingPerson.setPhoneNumber(phoneNumber);
             visitingPerson.setSick_id(sick_id);
-            isSave = visitingPerson.save();
-            if (!isSave) {
-                MyToast.showToast(ConfirmReservationInformation.this, "保存就诊人信息失败");
-            }
+            visitingPerson.save();
+//            isSave = visitingPerson.save();
+//            if (!isSave) {
+//                MyToast.showToast(ConfirmReservationInformation.this, "保存就诊人信息失败");
+//            }
         }
     }
 

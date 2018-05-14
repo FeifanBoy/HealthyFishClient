@@ -253,9 +253,10 @@ public class MainIndexHealthyManagement extends BaseActivity {
                         }
                         getUserPhyFromDB(uid);
 
-                    } else {
-                        MyToast.showToast(MainIndexHealthyManagement.this,"加载个人体质信息出错啦");
                     }
+//                    else {
+//                        MyToast.showToast(MainIndexHealthyManagement.this,"加载个人体质信息出错啦");
+//                    }
                 }
             }
 

@@ -7,12 +7,35 @@
     android:orientation="vertical"
     android:background="@color/color_white"
     tools:context="com.healthyfish.healthyfish.ui.activity.Inspection_report.MyPrescription">
+
     <include layout="@layout/toolbar"/>
+
+    <LinearLayout
+        android:id="@+id/ll_empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="50px"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="600px"
+            android:layout_height="260px"
+            android:src="@drawable/ic_no_alarm_message" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20px"
+            android:gravity="center"
+            android:text="您还没有电子处方噢~"
+            android:textSize="16sp" />
+    </LinearLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_prescription"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    </android.support.v7.widget.RecyclerView>
+        android:layout_height="match_parent"/>
 
 </com.zhy.autolayout.AutoLinearLayout>

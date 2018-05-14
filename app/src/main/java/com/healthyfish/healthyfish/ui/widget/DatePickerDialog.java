@@ -186,7 +186,7 @@ public class DatePickerDialog extends Dialog {
                 mylistener.refreshUI(getDate());
                 dismiss();
                 //用来测试选择结果
-                Toast.makeText(context,getDate(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context,getDate(), Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -623,7 +623,7 @@ public class DoctorDetail extends BaseActivity {
         //Log.i("LYQ", key);
 
         final String strJson = JSON.toJSONString(beanDoctorInfo);
-        Log.i("LYQ", "strJsonBeanDoctorInfo:" + strJson);
+        //Log.i("LYQ", "strJsonBeanDoctorInfo:" + strJson);
         //关注列表的key的具体形式
         //key = "care_" + uid + "_" + Hosp + "_" + Dept + "_" + STAFF_NO;
         BeanBaseKeySetReq beanBaseKeySetReq = new BeanBaseKeySetReq();
@@ -720,9 +720,10 @@ public class DoctorDetail extends BaseActivity {
                                 }
                                 getMyConcernFromDB(uid);
 
-                            } else {
-                                MyToast.showToast(DoctorDetail.this, "更新关注信息出错啦");
                             }
+//                            else {
+//                                MyToast.showToast(DoctorDetail.this, "更新关注信息出错啦");
+//                            }
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -758,7 +759,7 @@ public class DoctorDetail extends BaseActivity {
             public void onNext(ResponseBody responseBody) {
                 try {
                     strJson = responseBody.string();
-                    Log.e("LYQ", "hospDoctMoreSchdReq()响应：" + strJson);
+                    //Log.e("LYQ", "hospDoctMoreSchdReq()响应：" + strJson);
                     List<BeanKeyValue> beanKeyValueList = JSONArray.parseArray(strJson, BeanKeyValue.class);
                     getDoctorTitle(beanKeyValueList);
                 } catch (IOException e) {
@@ -797,7 +798,7 @@ public class DoctorDetail extends BaseActivity {
                 public void onNext(ResponseBody responseBody) {
                     try {
                         strJson = responseBody.string();
-                        Log.e("LYQ", "getDoctorTitle()响应：" + strJson);
+                        //Log.e("LYQ", "getDoctorTitle()响应：" + strJson);
                         BeanHospDeptDoctListRespItem beanHospDeptDoctListRespItem = JSON.parseObject(strJson, BeanHospDeptDoctListRespItem.class);
                         BeanDoctorInfo doctInfo = new BeanDoctorInfo();
                         //从数据库查找科室信息

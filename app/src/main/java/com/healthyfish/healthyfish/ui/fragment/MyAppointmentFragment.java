@@ -2,7 +2,6 @@ package com.healthyfish.healthyfish.ui.fragment;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -12,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.alibaba.fastjson.JSON;
@@ -26,12 +26,10 @@ import com.healthyfish.healthyfish.POJO.BeanHospDeptDoctListRespItem;
 import com.healthyfish.healthyfish.POJO.BeanHospRegisterReq;
 import com.healthyfish.healthyfish.POJO.BeanMyAppointmentItem;
 import com.healthyfish.healthyfish.POJO.BeanUserListReq;
-import com.healthyfish.healthyfish.POJO.BeanUserListValueReq;
 import com.healthyfish.healthyfish.POJO.BeanUserLoginReq;
 import com.healthyfish.healthyfish.R;
 import com.healthyfish.healthyfish.adapter.MyAppointmentLvAdapter;
 import com.healthyfish.healthyfish.eventbus.RefreshMyAppointmentMsg;
-import com.healthyfish.healthyfish.utils.AutoLogin;
 import com.healthyfish.healthyfish.utils.MySharedPrefUtil;
 import com.healthyfish.healthyfish.utils.MyToast;
 import com.healthyfish.healthyfish.utils.OkHttpUtils;
@@ -44,15 +42,12 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.litepal.crud.DataSupport;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -73,6 +68,8 @@ public class MyAppointmentFragment extends Fragment {
     @BindView(R.id.lv_my_appointment)
     ListView lvMyAppointment;
     Unbinder unbinder;
+    @BindView(R.id.ll_empty)
+    LinearLayout llEmpty;
 
     private View rootView;
     private final List<BeanMyAppointmentItem> mList = new ArrayList<>();
@@ -94,6 +91,8 @@ public class MyAppointmentFragment extends Fragment {
         String user = MySharedPrefUtil.getValue("user");
         if (!TextUtils.isEmpty(user)) {
             //mList.clear();
+            initListView(mList);
+
             if (MyApplication.isFirstUpdateMyAppointment) {
                 BeanUserLoginReq beanUserLoginReq = JSON.parseObject(user, BeanUserLoginReq.class);
                 uid = beanUserLoginReq.getMobileNo();
@@ -119,8 +118,6 @@ public class MyAppointmentFragment extends Fragment {
 
         }
 
-        initListView(mList);
-
         return rootView;
     }
 
@@ -139,7 +136,10 @@ public class MyAppointmentFragment extends Fragment {
      */
     private void getDataFromDB() {
         List<BeanMyAppointmentItem> list = DataSupport.findAll(BeanMyAppointmentItem.class);
-        if (!list.isEmpty()) {
+        if (list.isEmpty()) {
+            llEmpty.setVisibility(View.VISIBLE);
+        } else {
+            llEmpty.setVisibility(View.GONE);
             for (BeanMyAppointmentItem beanMyAppointmentItem : list) {
                 mList.add(beanMyAppointmentItem);
             }
@@ -201,7 +201,7 @@ public class MyAppointmentFragment extends Fragment {
         beanUserListReq.setTo(-1);
         beanUserListReq.setNum(-1);
 
-        Log.i("LYQ", "挂号信息BeanUserListReq参数json:" + JSON.toJSONString(beanUserListReq));
+//        Log.i("LYQ", "挂号信息BeanUserListReq参数json:" + JSON.toJSONString(beanUserListReq));
 
         RetrofitManagerUtils.getInstance(getActivity(), null).getHealthyInfoByRetrofit(OkHttpUtils.getRequestBody(beanUserListReq), new Subscriber<ResponseBody>() {
             String appointmentListResp = "";
@@ -213,14 +213,14 @@ public class MyAppointmentFragment extends Fragment {
 
             @Override
             public void onError(Throwable e) {
-                Log.i("LYQ", "appointmentListReq()_onError:" + e.toString());
+//                Log.i("LYQ", "appointmentListReq()_onError:" + e.toString());
             }
 
             @Override
             public void onNext(ResponseBody responseBody) {
                 try {
                     appointmentListResp = responseBody.string();
-                    Log.i("LYQ", "appointmentListResp:" + appointmentListResp);
+//                    Log.i("LYQ", "appointmentListResp:" + appointmentListResp);
                     if (!TextUtils.isEmpty(appointmentListResp)) {
                         if (appointmentListResp.substring(0, 1).equals("[")) {
                             List<String> list = JSONArray.parseObject(appointmentListResp, List.class);
@@ -259,7 +259,7 @@ public class MyAppointmentFragment extends Fragment {
         BeanBaseKeyGetReq beanBaseKeyGetReq = new BeanBaseKeyGetReq();
         beanBaseKeyGetReq.setKey(beanMyAppointmentItem.getRespKey());
 
-        Log.i("LYQ", "挂号信息BeanBaseKeyGetReq参数json:" + JSON.toJSONString(beanBaseKeyGetReq));
+//        Log.i("LYQ", "挂号信息BeanBaseKeyGetReq参数json:" + JSON.toJSONString(beanBaseKeyGetReq));
 
         RetrofitManagerUtils.getInstance(getActivity(), null).getHealthyInfoByRetrofit(OkHttpUtils.getRequestBody(beanBaseKeyGetReq), new Subscriber<ResponseBody>() {
             String appointmentResp = "";
@@ -272,14 +272,14 @@ public class MyAppointmentFragment extends Fragment {
 
             @Override
             public void onError(Throwable e) {
-                Log.i("LYQ", "appointmentResp_onError:" + e.toString());
+//                Log.i("LYQ", "appointmentResp_onError:" + e.toString());
             }
 
             @Override
             public void onNext(ResponseBody responseBody) {
                 try {
                     appointmentResp = responseBody.string();
-                    Log.i("LYQ", "appointmentResp:" + appointmentResp);
+//                    Log.i("LYQ", "appointmentResp:" + appointmentResp);
                     if (!TextUtils.isEmpty(appointmentResp)) {
                         if (appointmentResp.substring(0, 1).equals("{")) {
                             BeanBaseKeyGetResp beanBaseKeyGetResp = JSON.parseObject(appointmentResp, BeanBaseKeyGetResp.class);
@@ -374,14 +374,14 @@ public class MyAppointmentFragment extends Fragment {
 
             @Override
             public void onError(Throwable e) {
-                Log.i("LYQ", "appointmentResp——onError:" + e.toString());
+//                Log.i("LYQ", "appointmentResp——onError:" + e.toString());
             }
 
             @Override
             public void onNext(ResponseBody responseBody) {
                 try {
                     doctorInfoResp = responseBody.string();
-                    Log.i("LYQ", "doctorInfoReq（）Resp:" + doctorInfoResp);
+//                    Log.i("LYQ", "doctorInfoReq（）Resp:" + doctorInfoResp);
                     if (!TextUtils.isEmpty(doctorInfoResp)) {
                         if (doctorInfoResp.substring(0, 1).equals("{")) {
 
@@ -407,14 +407,14 @@ public class MyAppointmentFragment extends Fragment {
                             beanMyAppointmentItem.setPrice(String.valueOf(beanHospDeptDoctListRespItem.getPRICE()));
                             beanMyAppointmentItem.setWORK_TYPE(beanHospDeptDoctListRespItem.getWORK_TYPE());
 
-                            Log.i("LYQ", "beanMyAppointmentItem.getRespKey():" + beanMyAppointmentItem.getRespKey());
+//                            Log.i("LYQ", "beanMyAppointmentItem.getRespKey():" + beanMyAppointmentItem.getRespKey());
                             boolean isSave = beanMyAppointmentItem.save();//将挂号信息保存到数据库
                             if (!isSave) {
                                 beanMyAppointmentItem.save();//若保存失败则再次保存
                             } else {
                                 MyApplication.isFirstUpdateMyAppointment = false;
                             }
-
+                            llEmpty.setVisibility(View.GONE);
                             mList.add(beanMyAppointmentItem);
                             adapter.notifyDataSetChanged();
                         } else {
@@ -460,7 +460,7 @@ public class MyAppointmentFragment extends Fragment {
                     } else {
                         MyToast.showToast(getActivity(), "删除挂号信息失败，请重试！");
                     }
-                    Log.i("LYQ", strJson);
+//                    Log.i("LYQ", strJson);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

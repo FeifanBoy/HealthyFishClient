@@ -234,9 +234,9 @@ public class Login extends AutoLayoutActivity implements ILoginView {
 
             @Override
             public void onError(Throwable e) {
-                MyToast.showToast(Login.this, "获取个人信息失败,请更新您的个人信息");
+//                MyToast.showToast(Login.this, "获取个人信息失败,请更新您的个人信息");
                 EventBus.getDefault().post(new BeanPersonalInformation(true));//发送消息提醒刷新个人中心的个人信息
-                Log.i("LYQ", "获取个人信息失败，" + e.toString());
+//                Log.i("LYQ", "获取个人信息失败，" + e.toString());
             }
 
             @Override
@@ -244,7 +244,7 @@ public class Login extends AutoLayoutActivity implements ILoginView {
 
                 try {
                     resp = responseBody.string();
-                    Log.i("LYQ", "个人信息：" + resp);
+//                    Log.i("LYQ", "个人信息：" + resp);
                     if (!TextUtils.isEmpty(resp)) {
                         if (resp.toString().substring(0, 1).equals("{")) {
                             BeanBaseKeyGetResp beanBaseKeyGetResp = JSON.parseObject(resp, BeanBaseKeyGetResp.class);
@@ -254,32 +254,34 @@ public class Login extends AutoLayoutActivity implements ILoginView {
                                 if (!TextUtils.isEmpty(strJsonBeanPersonalInformation)) {
                                     if (strJsonBeanPersonalInformation.substring(0, 1).equals("{")) {
                                         BeanPersonalInformation beanPersonalInformation = JSON.parseObject(strJsonBeanPersonalInformation, BeanPersonalInformation.class);
-                                        boolean isSave = beanPersonalInformation.saveOrUpdate("key = ?", key);
-                                        if (!isSave) {
-                                            if (!beanPersonalInformation.saveOrUpdate("key = ?", key)) {
-                                                MyToast.showToast(Login.this, "保存个人信息失败");
-                                            }
-                                        }
-                                    } else {
-                                        Toast.makeText(Login.this, "个人信息有误,请更新您的个人信息",Toast.LENGTH_SHORT).show();
+                                        beanPersonalInformation.saveOrUpdate("key = ?", key);
+//                                        boolean isSave = beanPersonalInformation.saveOrUpdate("key = ?", key);
+//                                        if (!isSave) {
+//                                            if (!beanPersonalInformation.saveOrUpdate("key = ?", key)) {
+//                                                MyToast.showToast(Login.this, "保存个人信息失败");
+//                                            }
+//                                        }
                                     }
+//                                    else {
+//                                        Toast.makeText(Login.this, "个人信息有误,请更新您的个人信息",Toast.LENGTH_SHORT).show();
+//                                    }
 
                                     beanPersonalInformation.setLogin(true);
                                     EventBus.getDefault().post(beanPersonalInformation);//发送消息提醒刷新个人中心的个人信息
                                 } else {
-                                    MyToast.showToast(Login.this, "您还没有填写个人信息，请填写您的个人信息");
+//                                    MyToast.showToast(Login.this, "您还没有填写个人信息，请填写您的个人信息");
                                     EventBus.getDefault().post(new BeanPersonalInformation(true));//发送消息提醒刷新个人中心的个人信息
                                 }
                             } else {
-                                MyToast.showToast(Login.this, "获取个人信息失败");
+//                                MyToast.showToast(Login.this, "获取个人信息失败");
                                 EventBus.getDefault().post(new BeanPersonalInformation(true));//发送消息提醒刷新个人中心的个人信息
                             }
                         } else {
-                            MyToast.showToast(Login.this, "加载个人信息出错啦");
+//                            MyToast.showToast(Login.this, "加载个人信息出错啦");
                             EventBus.getDefault().post(new BeanPersonalInformation(true));//发送消息提醒刷新个人中心的个人信息
                         }
                     } else {
-                        MyToast.showToast(Login.this, "获取个人信息出错");
+//                        MyToast.showToast(Login.this, "获取个人信息出错");
                         EventBus.getDefault().post(new BeanPersonalInformation(true));//发送消息提醒刷新个人中心的个人信息
                     }
                 } catch (IOException e) {

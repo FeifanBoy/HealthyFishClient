@@ -151,27 +151,31 @@ public class PersonalInformation extends BaseActivity {
                                 beanPersonalInformation = JSON.parseObject(strJsonBeanPersonalInformation, BeanPersonalInformation.class);
                                 initWidget();
                                 beanPersonalInformation.saveOrUpdate("key = ?", key);
-                            } else {
-                                Toast.makeText(PersonalInformation.this, "个人信息有误,请更新您的个人信息",Toast.LENGTH_SHORT).show();
                             }
+//                            else {
+//                                Toast.makeText(PersonalInformation.this, "个人信息有误,请更新您的个人信息",Toast.LENGTH_SHORT).show();
+//                            }
 
-                        } else {
-                            MyToast.showToast(PersonalInformation.this, "您还没有填写个人信息，请填写您的个人信息");
                         }
-                    } else {
-                        MyToast.showToast(PersonalInformation.this, "获取个人信息失败，请重试");
+//                        else {
+//                            MyToast.showToast(PersonalInformation.this, "您还没有填写个人信息，请填写您的个人信息");
+//                        }
                     }
-                } else {
-                    MyToast.showToast(PersonalInformation.this, "获取个人信息失败，请重试");
+//                    else {
+//                        MyToast.showToast(PersonalInformation.this, "获取个人信息失败，请重试");
+//                    }
                 }
+//                else {
+//                    MyToast.showToast(PersonalInformation.this, "获取个人信息失败，请重试");
+//                }
             }
 
             @Override
             public void onError(Throwable e) {
 
-                MyToast.showToast(PersonalInformation.this, "获取个人信息失败,请更新您的个人信息");
+//                MyToast.showToast(PersonalInformation.this, "获取个人信息失败,请更新您的个人信息");
 
-                Log.i("LYQ", "获取个人信息失败，" + e.toString());
+//                Log.i("LYQ", "获取个人信息失败，" + e.toString());
             }
 
             @Override
@@ -179,7 +183,7 @@ public class PersonalInformation extends BaseActivity {
 
                 try {
                     resp = responseBody.string();
-                    Log.i("LYQ", "个人信息：" + resp);
+//                    Log.i("LYQ", "个人信息：" + resp);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

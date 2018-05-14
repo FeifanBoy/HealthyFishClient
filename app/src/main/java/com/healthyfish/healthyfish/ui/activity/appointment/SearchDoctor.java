@@ -28,11 +28,13 @@ import com.healthyfish.healthyfish.POJO.BeanSearchRespItem;
 import com.healthyfish.healthyfish.R;
 import com.healthyfish.healthyfish.adapter.ChoiceDoctorLvAdapter;
 import com.healthyfish.healthyfish.ui.activity.BaseActivity;
+import com.healthyfish.healthyfish.utils.DoctorPostComparator;
 import com.healthyfish.healthyfish.utils.OkHttpUtils;
 import com.healthyfish.healthyfish.utils.RetrofitManagerUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -75,7 +77,7 @@ public class SearchDoctor extends BaseActivity {
         setContentView(R.layout.activity_search_doctor);
         ButterKnife.bind(this);
         initToolBar(toolbar, toolbarTitle, "搜索医生");
-        initListView();//初始化搜索结果列表
+        //initListView();//初始化搜索结果列表
         //键盘的搜索按钮监听
         etSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -213,6 +215,7 @@ public class SearchDoctor extends BaseActivity {
      * 初始化ListView
      */
     private void initListView() {
+
         adapter = new ChoiceDoctorLvAdapter(this, mDoctorInfo);
         lvSearchDoctor.setAdapter(adapter);
         lvSearchDoctor.setOnItemClickListener(new AdapterView.OnItemClickListener() {

@@ -40,11 +40,35 @@
                 <!--android:background="@mipmap/search_white" />-->
         <!--</android.support.v7.widget.Toolbar>-->
     <!--</com.zhy.autolayout.AutoFrameLayout>-->
+
     <include layout="@layout/toolbar"/>
+
+    <LinearLayout
+        android:id="@+id/ll_empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="50px"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="600px"
+            android:layout_height="260px"
+            android:src="@drawable/ic_no_alarm_message" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20px"
+            android:gravity="center"
+            android:text="您还没有检查报告噢~"
+            android:textSize="16sp" />
+    </LinearLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"/>
 
-    </android.support.v7.widget.RecyclerView>
 </com.zhy.autolayout.AutoLinearLayout>

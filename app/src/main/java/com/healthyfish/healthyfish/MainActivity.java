@@ -28,6 +28,7 @@ import com.healthyfish.healthyfish.adapter.MainVpAdapter;
 import com.healthyfish.healthyfish.eventbus.InitAllMessage;
 import com.healthyfish.healthyfish.eventbus.RefresHomeMsg;
 import com.healthyfish.healthyfish.eventbus.RefreshMyAppointmentMsg;
+import com.healthyfish.healthyfish.eventbus.ToHealthyWork;
 import com.healthyfish.healthyfish.ui.activity.BaseActivity;
 import com.healthyfish.healthyfish.ui.activity.Login;
 import com.healthyfish.healthyfish.ui.fragment.HealthWorkshopFragment;
@@ -207,6 +208,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void toInterrogationFragment(BeanMyAppointmentItem beanMyAppointmentItem) {
         setTab(1);//挂号成功后通知跳转到问诊页面InterrogationFragment
         EventBus.getDefault().post(new RefreshMyAppointmentMsg(beanMyAppointmentItem.getRespKey()));
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void toHealthyWork(ToHealthyWork toHealthyWork) {
+        setTab(3);
     }
 
 
@@ -440,7 +446,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             @Override
             public void onError(Throwable e) {
-                MyToast.showToast(MainActivity.this, "更新个人信息失败,请更新您的个人信息");
+//                MyToast.showToast(MainActivity.this, "更新个人信息失败,请更新您的个人信息");
             }
 
             @Override
@@ -448,7 +454,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
                 try {
                     resp = responseBody.string();
-                    Log.i("LYQ", "MainActivity个人信息响应：" + resp);
+//                    Log.i("LYQ", "MainActivity个人信息响应：" + resp);
                     if (!TextUtils.isEmpty(resp)) {
                         if (resp.toString().substring(0, 1).equals("{")) {
                             BeanBaseKeyGetResp beanBaseKeyGetResp = JSON.parseObject(resp, BeanBaseKeyGetResp.class);
@@ -457,28 +463,33 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                                 if (!TextUtils.isEmpty(strJsonBeanPersonalInformation)) {
                                     if (strJsonBeanPersonalInformation.substring(0, 1).equals("{")) {
                                         BeanPersonalInformation beanPersonalInformation = JSON.parseObject(strJsonBeanPersonalInformation, BeanPersonalInformation.class);
-                                        boolean isSave = beanPersonalInformation.saveOrUpdate("key = ?", key);
-                                        if (!isSave) {
-                                            if (!beanPersonalInformation.saveOrUpdate("key = ?", key)) {
-                                                MyToast.showToast(MainActivity.this, "更新个人信息失败");
-                                            }
-                                        }
-                                    } else {
-                                        Toast.makeText(MainActivity.this, "个人信息有误,请更新您的个人信息", Toast.LENGTH_SHORT).show();
+                                        beanPersonalInformation.saveOrUpdate("key = ?", key);
+//                                        boolean isSave = beanPersonalInformation.saveOrUpdate("key = ?", key);
+//                                        if (!isSave) {
+//                                            if (!beanPersonalInformation.saveOrUpdate("key = ?", key)) {
+//                                                MyToast.showToast(MainActivity.this, "更新个人信息失败");
+//                                            }
+//                                        }
                                     }
+//                                    else {
+//                                        Toast.makeText(MainActivity.this, "个人信息有误,请更新您的个人信息", Toast.LENGTH_SHORT).show();
+//                                    }
                                 } else {
                                     //MyToast.showToast(MainActivity.this, "您还没有填写个人信息，请填写您的个人信息");//首页不用提醒，在个人中心页面再提醒
                                 }
                                 MyApplication.isIsFirstUpdatePersonalInfo = false;
-                            } else {
-                                MyToast.showToast(MainActivity.this, "更新个人信息失败");
                             }
-                        } else {
-                            MyToast.showToast(MainActivity.this, "加载个人信息出错啦");
+//                            else {
+//                                MyToast.showToast(MainActivity.this, "更新个人信息失败");
+//                            }
                         }
-                    } else {
-                        MyToast.showToast(MainActivity.this, "更新个人信息失败");
+//                        else {
+//                            MyToast.showToast(MainActivity.this, "加载个人信息出错啦");
+//                        }
                     }
+//                    else {
+//                        MyToast.showToast(MainActivity.this, "更新个人信息失败");
+//                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
